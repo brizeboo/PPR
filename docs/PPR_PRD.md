@@ -328,46 +328,20 @@ PPR/
 ```
 
 ### 9.2 后端目录结构（ppr-server）
+（已调整为单模块 Maven 工程，不再拆分 ppr-server-app / ppr-server-domain / ppr-server-infra）
 ```text
 ppr-server/
 ├─ pom.xml
-├─ ppr-server-app/               # Spring Boot 启动模块（聚合依赖、打包入口）
-│  ├─ src/main/java/
-│  │  └─ com/ppr/
-│  │     ├─ PprApplication.java
-│  │     ├─ config/              # Spring 配置（序列化、跨域、线程池等）
-│  │     ├─ web/
-│  │     │  ├─ controller/       # API Controller（Client API + Admin API）
-│  │     │  ├─ dto/              # 入参/出参模型（Request/Response）
-│  │     │  ├─ interceptor/      # Token 透传、日志、鉴权拦截器
-│  │     │  └─ advice/           # 全局异常处理、统一返回体
-│  │     ├─ security/            # Sa-Token 集成、权限校验、权限缓存
-│  │     ├─ schedule/            # 定时任务调度、Cron 动态管理、邮件发送
-│  │     └─ export/              # Excel 导出、模板渲染适配层
-│  └─ src/main/resources/
-│     ├─ application.yml
-│     ├─ db/migration/           # SQLite 元数据库初始化/升级脚本（可选）
-│     └─ templates/              # 邮件模板等（可选）
-├─ ppr-server-domain/            # 领域层：核心模型、领域服务、业务规则
-│  └─ src/main/java/com/ppr/domain/
-│     ├─ model/                  # View/Report/Template/Permission 等领域模型
-│     └─ service/                # 领域服务（参数校验、字典规则、行级权限拼接策略）
-├─ ppr-server-infra/             # 基础设施层：数据访问、外部系统适配、组件封装
-│  └─ src/main/java/com/ppr/infra/
-│     ├─ meta/                   # 内置 SQLite 元数据库访问（MyBatis-Plus Mapper）
-│     │  ├─ entity/
-│     │  ├─ mapper/
-│     │  └─ repository/
-│     ├─ datasource/             # dynamic-datasource 多数据源路由、连接池配置
-│     ├─ jdbc/                   # JdbcTemplate 执行外部数据源动态 SQL
-│     ├─ sql/                    # JSqlParser 安全审查、DataScope 注入、预编译绑定
-│     ├─ dict/                   # 字典元数据加载与缓存
-│     ├─ mail/                   # JavaMailSender 封装、附件/正文构建
-│     └─ log/                    # 操作日志/访问日志/任务日志落库
-└─ ppr-server-api/               # 对外可复用的 API/契约（可选）
-   └─ src/main/java/com/ppr/api/
-      ├─ constants/
-      └─ enums/
+├─ src/main/java/
+│  └─ com/ppr/
+│     ├─ PprApplication.java
+│     ├─ config/                 # Spring 配置
+│     ├─ web/                    # API Controller + DTO + 全局异常
+│     ├─ domain/                 # 领域模型/枚举/领域服务（按需扩展）
+│     └─ infra/                  # 数据访问、动态数据源、SQL 安全等基础设施能力
+└─ src/main/resources/
+   ├─ application.yml
+   └─ db/schema.sql              # SQLite 元数据库初始化脚本
 ```
 
 ### 9.3 前端目录结构（ppr-web）

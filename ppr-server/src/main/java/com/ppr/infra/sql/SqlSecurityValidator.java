@@ -1,9 +1,9 @@
 package com.ppr.infra.sql;
 
-import com.github.jsqlparser.parser.CCJSqlParserUtil;
-import com.github.jsqlparser.statement.Statement;
-import com.github.jsqlparser.statement.Statements;
-import com.github.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.Statements;
+import net.sf.jsqlparser.statement.select.Select;
 
 public class SqlSecurityValidator {
     public void validateSelectOnly(String sql) {

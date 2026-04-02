@@ -2,9 +2,10 @@ package com.ppr.infra.datasource;
 
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceCreator;
-import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
+import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.ppr.infra.meta.entity.PprDatasourceEntity;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -17,7 +18,7 @@ public class DataSourceService {
     private final DataSourceCreator dataSourceCreator;
 
     public DataSourceService(DataSource dataSource,
-                             DataSourceCreator dataSourceCreator) {
+                             @Qualifier("hikariDataSourceCreator") DataSourceCreator dataSourceCreator) {
         this.routingDataSource = (DynamicRoutingDataSource) dataSource;
         this.dataSourceCreator = dataSourceCreator;
     }
@@ -57,3 +58,4 @@ public class DataSourceService {
         }
     }
 }
+
