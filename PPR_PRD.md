@@ -312,3 +312,96 @@ sequenceDiagram
         PPR_FE->>PPR_FE: 9b. 加载 Excel 模板文件，基于 mapping_config 在 x-spreadsheet 渲染动态数据
     end
 ```
+
+## 9. 源码目录结构设计
+为保证“可嵌入组件产物 + 独立管理控制台 + 后端服务”三者解耦，同时便于后续扩展（多数据源、权限、导出、定时任务），源码目录采用**前后端分离 + 前端多包（可选）**的组织方式。
+
+### 9.1 仓库根目录
+```text
+PPR/
+├─ docs/                         # 项目文档（架构、接口、设计说明）
+├─ docker/                       # Dockerfile、docker-compose、容器化脚本
+├─ scripts/                      # 构建/发布辅助脚本（可选）
+├─ ppr-server/                   # 后端（Spring Boot + Maven）
+├─ ppr-web/                      # 前端（Vue3 + Vite）
+└─ README.md
+```
+
+### 9.2 后端目录结构（ppr-server）
+```text
+ppr-server/
+├─ pom.xml
+├─ ppr-server-app/               # Spring Boot 启动模块（聚合依赖、打包入口）
+│  ├─ src/main/java/
+│  │  └─ com/ppr/
+│  │     ├─ PprApplication.java
+│  │     ├─ config/              # Spring 配置（序列化、跨域、线程池等）
+│  │     ├─ web/
+│  │     │  ├─ controller/       # API Controller（Client API + Admin API）
+│  │     │  ├─ dto/              # 入参/出参模型（Request/Response）
+│  │     │  ├─ interceptor/      # Token 透传、日志、鉴权拦截器
+│  │     │  └─ advice/           # 全局异常处理、统一返回体
+│  │     ├─ security/            # Sa-Token 集成、权限校验、权限缓存
+│  │     ├─ schedule/            # 定时任务调度、Cron 动态管理、邮件发送
+│  │     └─ export/              # Excel 导出、模板渲染适配层
+│  └─ src/main/resources/
+│     ├─ application.yml
+│     ├─ db/migration/           # SQLite 元数据库初始化/升级脚本（可选）
+│     └─ templates/              # 邮件模板等（可选）
+├─ ppr-server-domain/            # 领域层：核心模型、领域服务、业务规则
+│  └─ src/main/java/com/ppr/domain/
+│     ├─ model/                  # View/Report/Template/Permission 等领域模型
+│     └─ service/                # 领域服务（参数校验、字典规则、行级权限拼接策略）
+├─ ppr-server-infra/             # 基础设施层：数据访问、外部系统适配、组件封装
+│  └─ src/main/java/com/ppr/infra/
+│     ├─ meta/                   # 内置 SQLite 元数据库访问（MyBatis-Plus Mapper）
+│     │  ├─ entity/
+│     │  ├─ mapper/
+│     │  └─ repository/
+│     ├─ datasource/             # dynamic-datasource 多数据源路由、连接池配置
+│     ├─ jdbc/                   # JdbcTemplate 执行外部数据源动态 SQL
+│     ├─ sql/                    # JSqlParser 安全审查、DataScope 注入、预编译绑定
+│     ├─ dict/                   # 字典元数据加载与缓存
+│     ├─ mail/                   # JavaMailSender 封装、附件/正文构建
+│     └─ log/                    # 操作日志/访问日志/任务日志落库
+└─ ppr-server-api/               # 对外可复用的 API/契约（可选）
+   └─ src/main/java/com/ppr/api/
+      ├─ constants/
+      └─ enums/
+```
+
+### 9.3 前端目录结构（ppr-web）
+为同时满足三种交付形态：**独立管理控制台**、**原生 JS 单文件挂载**、**NPM 包（Vue/React）**，建议采用 workspace 方式组织多个 package（也可在项目初期先落成单体，后续再拆分）。
+
+```text
+ppr-web/
+├─ package.json
+├─ vite.config.ts
+├─ uno.config.ts
+├─ packages/
+│  ├─ core/                      # 通用核心（请求层、类型、工具、字典翻译）
+│  │  ├─ src/api/                # /api/v1/* 封装
+│  │  ├─ src/types/              # View/Report/Template 等 TS 类型
+│  │  └─ src/utils/
+│  ├─ embed/                     # 原生 JS 产物：暴露全局 PPR.render
+│  │  └─ src/
+│  │     ├─ entry.ts             # IIFE/UMD 入口（根据构建策略）
+│  │     └─ render/              # mount/unmount、拦截器注入
+│  ├─ admin/                     # 独立管理控制台（4.1~4.9）
+│  │  └─ src/
+│  │     ├─ pages/               # 各业务页面
+│  │     ├─ router/              # 动态路由与菜单
+│  │     ├─ store/               # Pinia
+│  │     └─ components/
+│  ├─ vue/                       # @ppr/vue 组件封装（可选）
+│  │  └─ src/
+│  └─ react/                     # @ppr/react 组件封装（可选）
+│     └─ src/
+└─ public/                       # 静态资源（可选）
+```
+
+### 9.4 关键约定
+1. **接口分层：** `web/controller` 只做协议适配（参数接收/返回体），核心业务落在 `domain`，数据访问与外部依赖在 `infra`。
+2. **元数据库与业务数据库分离：** `infra/meta` 固定操作 SQLite 元数据；`infra/jdbc + infra/datasource` 负责外部数据源动态执行。
+3. **安全与权限为横切能力：** SQL 安全审查、DataScope 拼接、Sa-Token 校验、日志审计均以独立模块/包组织，避免散落在业务逻辑中。
+4. **前端产物解耦：** `core` 复用请求与类型；`embed/admin/vue/react` 只关心各自的构建入口与 UI 组织，减少重复代码。
