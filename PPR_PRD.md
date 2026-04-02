@@ -151,14 +151,14 @@ PPR 前端将提供以下核心配置与展示页面：
 
 ## 5. 部署与集成方式
 * **前端开发与接入方式:**
-  * **组件独立打包 (脱离环境限制):** 使用 Vue 3 + Element Plus 开发完整的组件页面，并通过构建工具（如 Vite）将 Vue 运行时及所有 UI 依赖整体打包成独立的 `.js` 与 `.css` 静态产物。
-  * **原生 HTML 极速接入:** 宿主系统（如传统 JSP、纯 HTML、jQuery 项目等）**无需安装 Vue**。只需引入打包好的 JS 和 CSS，在页面预留 `<div id="ppr-container"></div>`，然后调用暴露在全局的 `PPR.render('#ppr-container', options)` 即可完成整个报表模块的无缝渲染。
+  * **组件独立打包 (脱离环境限制):** 使用 Vue 3 + Element Plus 开发完整的组件页面，并通过构建工具（如 Vite）将 Vue 运行时及所有 UI 依赖整体打包成独立的 `.js` 静态产物。在此过程中，**CSS 样式会被直接内联打包进 JS 文件中（实现样式自动注入）**，极大地简化了引入步骤。
+  * **原生 HTML 极速接入:** 宿主系统（如传统 JSP、纯 HTML、jQuery 项目等）**无需安装 Vue 和引入额外 CSS**。只需引入打包好的单一 JS 文件，在页面预留 `<div id="ppr-container"></div>`，然后调用暴露在全局的 `PPR.render('#ppr-container', options)` 即可完成整个报表模块的无缝渲染。
     * **`options` 核心参数包含:**
       * `reportId`: 需渲染的报表唯一标识。
       * `chartType`: 渲染类型（如：统计图或数据表）。
       * `requestInterceptor` / `responseInterceptor`: 请求响应拦截器（例如用于在 Header 中动态添加 Token 等配置）。
       * `onLoad`: 报表组件加载完成的生命周期钩子函数。
-  * **现代框架接入:** 提供独立的 NPM 包（如 `@ppr/vue` 和 `@ppr/react`），供基于 Webpack/Vite 的现代前端工程按需引入。
+  * **现代框架接入:** 提供独立的 NPM 包（如 `@ppr/vue` 和 `@ppr/react`），供基于 Webpack/Vite 的现代前端工程按需引入。引入组件时，**样式同样会自动注入生效**，开发者无需手动 `import` 任何独立的样式文件。
 * **后端部署方式:**
   * 作为独立应用运行，提供内置 SQLite 存储元数据，无需外部额外部署中间件。
   * **容器化部署 (Docker):** 提供标准的 `Dockerfile` 与 `docker-compose.yml`。支持通过挂载数据卷 (Volume) 的形式持久化内部 SQLite 数据库文件及日志文件，实现一键镜像拉取与快速启动。
