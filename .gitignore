@@ -1,0 +1,9 @@
+**/target/
+**/.idea/
+**/*.iml
+**/node_modules/
+**/dist/
+**/.vscode/
+**/*.db
+**/*.log
+ppr-web/node_modules/

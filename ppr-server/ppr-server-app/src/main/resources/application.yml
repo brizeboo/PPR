@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ppr-server
+  datasource:
+    dynamic:
+      primary: meta
+      strict: false
+      datasource:
+        meta:
+          driver-class-name: org.sqlite.JDBC
+          url: jdbc:sqlite:./ppr-meta.db
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
