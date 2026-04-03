@@ -2,18 +2,30 @@ import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import ExcelEditor from '@/components/ExcelEditor/index.vue';
 import { http } from '@/api/http';
+// Excel 编辑器组件引用
 const excelEditorRef = ref(null);
+// 当前加载的模板数据
 const currentTemplate = ref(null);
+// 字段映射配置列表
 const mappingConfigList = ref([]);
+// 选中的报表ID
 const selectedReport = ref('');
+// 可用的字段列表
 const availableFields = ref([]);
+// 配置弹窗可见性
 const dialogVisible = ref(false);
+// 字段填充配置
 const fillConfig = ref({
     field: '',
     type: 'single',
     row: 0,
     col: 0
 });
+/**
+ * 模板文件上传成功回调
+ * @param response 服务端响应
+ * @param uploadFile 上传的文件对象
+ */
 const handleUploadSuccess = (response, uploadFile) => {
     currentTemplate.value = response;
     mappingConfigList.value = response.mappingConfig ? JSON.parse(response.mappingConfig) : [];
@@ -22,6 +34,9 @@ const handleUploadSuccess = (response, uploadFile) => {
         excelEditorRef.value.loadExcelFile(uploadFile.raw);
     }
 };
+/**
+ * 根据选择的报表加载对应字段
+ */
 const loadReportFields = async () => {
     // Mock 数据，实际应该调用 API 获取报表的列信息
     availableFields.value = [
@@ -30,6 +45,11 @@ const loadReportFields = async () => {
         { prop: 'score', label: '分数' },
     ];
 };
+/**
+ * 拖拽开始事件，设置拖拽数据
+ * @param e 拖拽事件对象
+ * @param field 被拖拽的字段
+ */
 const onDragStart = (e, field) => {
     if (e.dataTransfer) {
         e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -38,6 +58,10 @@ const onDragStart = (e, field) => {
         }));
     }
 };
+/**
+ * 在编辑器内放置字段事件
+ * @param payload 包含行列和字段信息的对象
+ */
 const onEditorDrop = (payload) => {
     fillConfig.value = {
         field: payload.value.field,
@@ -47,6 +71,9 @@ const onEditorDrop = (payload) => {
     };
     dialogVisible.value = true;
 };
+/**
+ * 确认填充配置，将标记写入单元格
+ */
 const confirmFillConfig = () => {
     mappingConfigList.value.push({ ...fillConfig.value });
     if (excelEditorRef.value) {
@@ -56,6 +83,9 @@ const confirmFillConfig = () => {
     dialogVisible.value = false;
     ElMessage.success('已绑定字段');
 };
+/**
+ * 保存模板的映射配置到服务端
+ */
 const saveMapping = async () => {
     if (!currentTemplate.value)
         return;
@@ -73,14 +103,16 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "h-full flex flex-col gap-4" },
+    ...{ class: "td-container" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex justify-between items-center bg-white p-4 rounded shadow-sm" },
+    ...{ class: "td-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center gap-4" },
+    ...{ class: "td-header-left" },
 });
 const __VLS_0 = {}.ElUpload;
 /** @type {[typeof __VLS_components.ElUpload, typeof __VLS_components.elUpload, typeof __VLS_components.ElUpload, typeof __VLS_components.elUpload, ]} */ ;
@@ -112,7 +144,7 @@ var __VLS_7;
 var __VLS_3;
 if (__VLS_ctx.currentTemplate) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: "text-sm text-gray-500" },
+        ...{ class: "td-text-muted" },
     });
     (__VLS_ctx.currentTemplate.name);
 }
@@ -139,13 +171,13 @@ const __VLS_15 = {
 __VLS_11.slots.default;
 var __VLS_11;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex-1 flex gap-4 overflow-hidden" },
+    ...{ class: "td-body" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "w-64 bg-white p-4 rounded shadow-sm flex flex-col" },
+    ...{ class: "td-sidebar" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-bold mb-4" },
+    ...{ class: "td-sidebar-title" },
 });
 const __VLS_16 = {}.ElSelect;
 /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
@@ -154,13 +186,13 @@ const __VLS_17 = __VLS_asFunctionalComponent(__VLS_16, new __VLS_16({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.selectedReport),
     placeholder: "请选择报表",
-    ...{ class: "mb-4" },
+    ...{ style: {} },
 }));
 const __VLS_18 = __VLS_17({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.selectedReport),
     placeholder: "请选择报表",
-    ...{ class: "mb-4" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_17));
 let __VLS_20;
 let __VLS_21;
@@ -182,7 +214,7 @@ const __VLS_26 = __VLS_25({
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 var __VLS_19;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex-1 overflow-auto border rounded p-2" },
+    ...{ class: "td-field-list" },
 });
 for (const [field] of __VLS_getVForSourceType((__VLS_ctx.availableFields))) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -190,7 +222,7 @@ for (const [field] of __VLS_getVForSourceType((__VLS_ctx.availableFields))) {
                 __VLS_ctx.onDragStart($event, field);
             } },
         key: (field.prop),
-        ...{ class: "p-2 mb-2 bg-blue-50 border border-blue-200 rounded cursor-move text-sm" },
+        ...{ class: "td-field-item" },
         draggable: "true",
     });
     (field.label);
@@ -198,11 +230,11 @@ for (const [field] of __VLS_getVForSourceType((__VLS_ctx.availableFields))) {
 }
 if (__VLS_ctx.availableFields.length === 0) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "text-gray-400 text-sm text-center mt-4" },
+        ...{ class: "td-empty-text" },
     });
 }
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex-1 bg-white rounded shadow-sm overflow-hidden border" },
+    ...{ class: "td-main" },
 });
 /** @type {[typeof ExcelEditor, ]} */ ;
 // @ts-ignore
@@ -286,11 +318,11 @@ const __VLS_57 = {}.ElSelect;
 // @ts-ignore
 const __VLS_58 = __VLS_asFunctionalComponent(__VLS_57, new __VLS_57({
     modelValue: (__VLS_ctx.fillConfig.type),
-    ...{ class: "w-full" },
+    ...{ class: "td-select-full" },
 }));
 const __VLS_59 = __VLS_58({
     modelValue: (__VLS_ctx.fillConfig.type),
-    ...{ class: "w-full" },
+    ...{ class: "td-select-full" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_58));
 __VLS_60.slots.default;
 const __VLS_61 = {}.ElOption;
@@ -374,61 +406,19 @@ var __VLS_44;
     var __VLS_84;
 }
 var __VLS_40;
-/** @type {__VLS_StyleScopedClasses['h-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['shadow-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-4']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-header-left']} */ ;
 /** @type {__VLS_StyleScopedClasses['upload-demo']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-hidden']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-64']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['shadow-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-bold']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-blue-50']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-blue-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['cursor-move']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-400']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['shadow-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-hidden']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-text-muted']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-body']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-sidebar']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-sidebar-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-field-list']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-field-item']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-empty-text']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-main']} */ ;
+/** @type {__VLS_StyleScopedClasses['td-select-full']} */ ;
 /** @type {__VLS_StyleScopedClasses['dialog-footer']} */ ;
 // @ts-ignore
 var __VLS_36 = __VLS_35;

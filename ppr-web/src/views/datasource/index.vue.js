@@ -1,9 +1,13 @@
 import { onMounted, reactive, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { deleteDatasource, listDatasources, saveDatasource, testDatasource } from '@/api/datasource';
+// 数据源列表数据
 const list = ref([]);
+// 控制抽屉开关
 const drawerOpen = ref(false);
+// 表单引用
 const formRef = ref();
+// 表单响应式数据
 const form = reactive({
     id: '',
     name: '',
@@ -12,16 +16,24 @@ const form = reactive({
     username: '',
     password: '',
 });
+// 表单验证规则
 const rules = {
     name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
     type: [{ required: true, message: '请选择类型', trigger: 'change' }],
     jdbcUrl: [{ required: true, message: '请输入 JDBC URL', trigger: 'blur' }],
 };
+// 抽屉标题，根据是否存在 id 判断是编辑还是新增
 const drawerTitle = computed(() => (form.id ? '编辑数据源' : '新增数据源'));
+/**
+ * 重新加载数据源列表
+ */
 async function reload() {
     const { data } = await listDatasources();
     list.value = data;
 }
+/**
+ * 打开新增数据源抽屉
+ */
 function openCreate() {
     form.id = '';
     form.name = '';
@@ -31,6 +43,10 @@ function openCreate() {
     form.password = '';
     drawerOpen.value = true;
 }
+/**
+ * 打开编辑数据源抽屉
+ * @param row 当前选中的数据源对象
+ */
 function openEdit(row) {
     form.id = row.id;
     form.name = row.name;
@@ -40,6 +56,9 @@ function openEdit(row) {
     form.password = row.password || '';
     drawerOpen.value = true;
 }
+/**
+ * 保存数据源信息
+ */
 async function onSave() {
     const ok = await formRef.value?.validate().catch(() => false);
     if (!ok)
@@ -49,15 +68,26 @@ async function onSave() {
     drawerOpen.value = false;
     await reload();
 }
+/**
+ * 删除数据源
+ * @param id 数据源ID
+ */
 async function onDelete(id) {
     await deleteDatasource(id);
     ElMessage.success('删除成功');
     await reload();
 }
+/**
+ * 测试表格中某行数据源的连接
+ * @param row 数据源对象
+ */
 async function onTestRow(row) {
     const { data } = await testDatasource({ jdbcUrl: row.jdbcUrl, username: row.username, password: row.password });
     data.success ? ElMessage.success('连接成功') : ElMessage.error('连接失败');
 }
+/**
+ * 测试表单中数据源的连接
+ */
 async function onTestForm() {
     const ok = await formRef.value?.validate().catch(() => false);
     if (!ok)
@@ -72,11 +102,13 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-3" },
+    ...{ class: "ds-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "text-lg font-600" },
+    ...{ class: "ds-title" },
 });
 const __VLS_0 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -337,11 +369,11 @@ const __VLS_82 = {}.ElSelect;
 // @ts-ignore
 const __VLS_83 = __VLS_asFunctionalComponent(__VLS_82, new __VLS_82({
     modelValue: (__VLS_ctx.form.type),
-    ...{ class: "w-full" },
+    ...{ class: "ds-select-full" },
 }));
 const __VLS_84 = __VLS_83({
     modelValue: (__VLS_ctx.form.type),
-    ...{ class: "w-full" },
+    ...{ class: "ds-select-full" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_83));
 __VLS_85.slots.default;
 const __VLS_86 = {}.ElOption;
@@ -460,7 +492,7 @@ var __VLS_67;
 {
     const { footer: __VLS_thisSlot } = __VLS_63.slots;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex justify-between w-full" },
+        ...{ class: "ds-drawer-footer" },
     });
     const __VLS_126 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -480,7 +512,7 @@ var __VLS_67;
     __VLS_129.slots.default;
     var __VLS_129;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex gap-2" },
+        ...{ class: "ds-drawer-actions" },
     });
     const __VLS_134 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -522,18 +554,11 @@ var __VLS_67;
     var __VLS_145;
 }
 var __VLS_63;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-lg']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-2']} */ ;
+/** @type {__VLS_StyleScopedClasses['ds-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['ds-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['ds-select-full']} */ ;
+/** @type {__VLS_StyleScopedClasses['ds-drawer-footer']} */ ;
+/** @type {__VLS_StyleScopedClasses['ds-drawer-actions']} */ ;
 // @ts-ignore
 var __VLS_69 = __VLS_68;
 var __VLS_dollars;

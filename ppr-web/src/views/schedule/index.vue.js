@@ -3,29 +3,44 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { getScheduleList, saveSchedule, changeScheduleStatus, deleteSchedule } from '@/api/schedule';
 import { getMailConfig, saveMailConfig, testMailSend } from '@/api/mail';
 import { listReports } from '@/api/report';
+// 表格加载状态
 const loading = ref(false);
+// 定时任务数据列表
 const tableData = ref([]);
+// 报表数据列表
 const reports = ref([]);
+// 任务表单弹窗可见性
 const dialogVisible = ref(false);
+// 任务表单标题
 const dialogTitle = ref('新增任务');
+// 提交按钮加载状态
 const submitLoading = ref(false);
+// 任务表单引用
 const formRef = ref();
+// 任务表单数据
 const form = ref({
     status: 1
 });
+// SMTP配置弹窗可见性
 const mailDialogVisible = ref(false);
+// SMTP表单引用
 const mailFormRef = ref();
+// SMTP表单数据
 const mailForm = ref({
     port: 465,
     protocol: 'smtp'
 });
+// SMTP提交按钮加载状态
 const mailSubmitLoading = ref(false);
+// 测试邮件发送按钮加载状态
 const testLoading = ref(false);
+// 任务表单验证规则
 const rules = {
     reportId: [{ required: true, message: '请选择报表', trigger: 'change' }],
     cron: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }],
     receivers: [{ required: true, message: '请输入收件人', trigger: 'blur' }]
 };
+// SMTP表单验证规则
 const mailRules = {
     host: [{ required: true, message: '请输入服务器地址', trigger: 'blur' }],
     port: [{ required: true, message: '请输入端口', trigger: 'blur' }],
@@ -40,6 +55,9 @@ onMounted(async () => {
     }
     catch (e) { }
 });
+/**
+ * 获取定时任务列表
+ */
 async function fetchData() {
     loading.value = true;
     try {
@@ -50,16 +68,28 @@ async function fetchData() {
         loading.value = false;
     }
 }
+/**
+ * 打开新增任务弹窗
+ */
 function handleCreate() {
     dialogTitle.value = '新增任务';
     form.value = { status: 1 };
     dialogVisible.value = true;
 }
+/**
+ * 打开编辑任务弹窗
+ * @param row 当前任务数据
+ */
 function handleEdit(row) {
     dialogTitle.value = '编辑任务';
     form.value = { ...row };
     dialogVisible.value = true;
 }
+/**
+ * 修改任务状态
+ * @param row 当前任务数据
+ * @param val 新状态值
+ */
 async function handleStatusChange(row, val) {
     try {
         await changeScheduleStatus(row.id, val);
@@ -70,6 +100,10 @@ async function handleStatusChange(row, val) {
         ElMessage.error('状态修改失败');
     }
 }
+/**
+ * 删除任务
+ * @param row 当前任务数据
+ */
 async function handleDelete(row) {
     try {
         await deleteSchedule(row.id);
@@ -80,6 +114,10 @@ async function handleDelete(row) {
         ElMessage.error('删除失败');
     }
 }
+/**
+ * 立即执行任务
+ * @param row 当前任务数据
+ */
 function handleExecute(row) {
     ElMessageBox.prompt('请输入临时接收邮箱（如果不输入则发给配置的收件人）', '立即执行', {
         confirmButtonText: '确定',
@@ -89,6 +127,9 @@ function handleExecute(row) {
         ElMessage.success('触发指令已发送');
     }).catch(() => { });
 }
+/**
+ * 提交任务表单
+ */
 async function submitForm() {
     await formRef.value.validate();
     submitLoading.value = true;
@@ -102,6 +143,9 @@ async function submitForm() {
         submitLoading.value = false;
     }
 }
+/**
+ * 打开全局SMTP配置弹窗
+ */
 async function handleMailConfig() {
     try {
         const res = await getMailConfig();
@@ -118,6 +162,9 @@ async function handleMailConfig() {
     catch (e) { }
     mailDialogVisible.value = true;
 }
+/**
+ * 提交SMTP配置表单
+ */
 async function submitMailForm() {
     await mailFormRef.value.validate();
     mailSubmitLoading.value = true;
@@ -130,6 +177,9 @@ async function submitMailForm() {
         mailSubmitLoading.value = false;
     }
 }
+/**
+ * 测试发送邮件
+ */
 async function testMail() {
     await mailFormRef.value.validate();
     ElMessageBox.prompt('请输入测试接收邮箱', '测试发信', {
@@ -155,11 +205,13 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "h-full flex flex-col" },
+    ...{ class: "schedule-container" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex justify-between mb-4" },
+    ...{ class: "schedule-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
 const __VLS_0 = {}.ElButton;
@@ -205,13 +257,13 @@ const __VLS_17 = __VLS_asFunctionalComponent(__VLS_16, new __VLS_16({
     data: (__VLS_ctx.tableData),
     border: true,
     stripe: true,
-    ...{ class: "flex-1" },
+    ...{ class: "schedule-table" },
 }));
 const __VLS_18 = __VLS_17({
     data: (__VLS_ctx.tableData),
     border: true,
     stripe: true,
-    ...{ class: "flex-1" },
+    ...{ class: "schedule-table" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_17));
 __VLS_asFunctionalDirective(__VLS_directives.vLoading)(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.loading) }, null, null);
 __VLS_19.slots.default;
@@ -457,12 +509,12 @@ const __VLS_94 = {}.ElSelect;
 const __VLS_95 = __VLS_asFunctionalComponent(__VLS_94, new __VLS_94({
     modelValue: (__VLS_ctx.form.reportId),
     placeholder: "请选择报表",
-    ...{ class: "w-full" },
+    ...{ class: "schedule-select-full" },
 }));
 const __VLS_96 = __VLS_95({
     modelValue: (__VLS_ctx.form.reportId),
     placeholder: "请选择报表",
-    ...{ class: "w-full" },
+    ...{ class: "schedule-select-full" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_95));
 __VLS_97.slots.default;
 for (const [item] of __VLS_getVForSourceType((__VLS_ctx.reports))) {
@@ -837,7 +889,7 @@ var __VLS_173;
 {
     const { footer: __VLS_thisSlot } = __VLS_169.slots;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex justify-between" },
+        ...{ class: "schedule-dialog-footer" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
     const __VLS_216 = {}.ElButton;
@@ -904,16 +956,11 @@ var __VLS_173;
     var __VLS_235;
 }
 var __VLS_169;
-/** @type {__VLS_StyleScopedClasses['h-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
+/** @type {__VLS_StyleScopedClasses['schedule-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['schedule-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['schedule-table']} */ ;
+/** @type {__VLS_StyleScopedClasses['schedule-select-full']} */ ;
+/** @type {__VLS_StyleScopedClasses['schedule-dialog-footer']} */ ;
 // @ts-ignore
 var __VLS_89 = __VLS_88, __VLS_175 = __VLS_174;
 var __VLS_dollars;

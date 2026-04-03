@@ -5,15 +5,27 @@ import { getReportMeta, getReportData } from '@/api/report';
 import ExcelEditor from '@/components/ExcelEditor/index.vue';
 import { http } from '@/api/http';
 const props = defineProps();
+// 加载状态
 const loading = ref(false);
+// 报表元数据
 const meta = ref(null);
+// 查询参数
 const queryParams = ref({});
+// 表格数据
 const tableData = ref({ columns: [], rows: [] });
+// 表格列配置
 const tableColumns = ref([]);
+// ECharts 容器引用
 const echartRef = ref(null);
+// Excel 编辑器引用
 const excelViewerRef = ref(null);
+// ECharts 实例
 let chartInstance = null;
+// 轮询定时器
 let pollingTimer = null;
+/**
+ * 初始化组件，加载元数据和数据
+ */
 async function init() {
     if (!props.reportId)
         return;
@@ -49,6 +61,9 @@ async function init() {
         loading.value = false;
     }
 }
+/**
+ * 获取报表数据
+ */
 async function fetchData() {
     if (!props.reportId || !meta.value)
         return;
@@ -125,21 +140,32 @@ async function fetchData() {
         loading.value = false;
     }
 }
+/**
+ * 启动数据轮询
+ * @param intervalSec 轮询间隔(秒)
+ */
 function startPolling(intervalSec) {
     stopPolling();
     pollingTimer = window.setInterval(() => {
         fetchData();
     }, intervalSec * 1000);
 }
+/**
+ * 停止数据轮询
+ */
 function stopPolling() {
     if (pollingTimer) {
         clearInterval(pollingTimer);
         pollingTimer = null;
     }
 }
+/**
+ * 窗口大小变化时重置图表大小
+ */
 function handleResize() {
     chartInstance?.resize();
 }
+// 监听 reportId 变化重新加载
 watch(() => props.reportId, () => {
     stopPolling();
     if (chartInstance) {
@@ -163,12 +189,14 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "ppr-report-viewer w-full h-full flex flex-col" },
+    ...{ class: "ppr-report-viewer prv-container" },
 });
 if (__VLS_ctx.meta?.params && __VLS_ctx.meta.params.length > 0) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "mb-4 border border-solid border-gray-200 p-3 rounded bg-white" },
+        ...{ class: "prv-query-form" },
     });
     const __VLS_0 = {}.ElForm;
     /** @type {[typeof __VLS_components.ElForm, typeof __VLS_components.elForm, typeof __VLS_components.ElForm, typeof __VLS_components.elForm, ]} */ ;
@@ -247,7 +275,7 @@ if (__VLS_ctx.meta?.params && __VLS_ctx.meta.params.length > 0) {
     var __VLS_3;
 }
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex-1 overflow-hidden bg-white border border-solid border-gray-200 rounded p-3 relative" },
+    ...{ class: "prv-content" },
 });
 __VLS_asFunctionalDirective(__VLS_directives.vLoading)(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.loading) }, null, null);
 if (__VLS_ctx.meta?.chartType === 'Table') {
@@ -291,7 +319,7 @@ if (__VLS_ctx.meta?.chartType === 'Table') {
 else if (__VLS_ctx.meta?.chartType === 'EChart') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ref: "echartRef",
-        ...{ class: "w-full h-full" },
+        ...{ class: "prv-echart" },
     });
     /** @type {typeof __VLS_ctx.echartRef} */ ;
 }
@@ -322,28 +350,10 @@ else {
     }, ...__VLS_functionalComponentArgsRest(__VLS_42));
 }
 /** @type {__VLS_StyleScopedClasses['ppr-report-viewer']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-hidden']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['relative']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-full']} */ ;
+/** @type {__VLS_StyleScopedClasses['prv-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['prv-query-form']} */ ;
+/** @type {__VLS_StyleScopedClasses['prv-content']} */ ;
+/** @type {__VLS_StyleScopedClasses['prv-echart']} */ ;
 // @ts-ignore
 var __VLS_40 = __VLS_39;
 var __VLS_dollars;

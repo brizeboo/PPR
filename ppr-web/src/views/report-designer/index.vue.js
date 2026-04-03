@@ -7,14 +7,23 @@ import { listReports, saveReport, getReportMeta } from '@/api/report';
 import { listViews } from '@/api/view';
 import PprReportViewer from '@/components/PprReportViewer.vue';
 import { http } from '@/api/http';
+// CodeMirror JSON扩展
 const jsonExtensions = [json(), oneDark];
+// 报表列表
 const reports = ref([]);
+// 视图列表
 const views = ref([]);
+// 模板列表
 const templates = ref([]);
+// 搜索关键字
 const keyword = ref('');
+// 选中的报表ID
 const selectedReportId = ref('');
+// 当前预览的报表ID
 const previewId = ref('');
+// 预览组件的 Key，用于强制刷新
 const previewKey = ref(0);
+// 报表表单数据
 const form = reactive({
     id: '',
     name: '',
@@ -25,18 +34,25 @@ const form = reactive({
     styleConfig: '[]',
     chartConfig: '{}'
 });
+// 根据关键字过滤后的报表列表
 const filteredReports = computed(() => {
     const k = keyword.value.trim().toLowerCase();
     if (!k)
         return reports.value;
     return reports.value.filter((r) => r.name.toLowerCase().includes(k) || r.id.toLowerCase().includes(k));
 });
+/**
+ * 重新加载各类列表数据
+ */
 async function reloadData() {
     const [resReports, resViews, resTemplates] = await Promise.all([listReports(), listViews(), http.get('/api/v1/admin/template/list')]);
     reports.value = resReports.data;
     views.value = resViews.data;
     templates.value = resTemplates.data;
 }
+/**
+ * 新建报表
+ */
 function newReport() {
     selectedReportId.value = '';
     form.id = '';
@@ -49,6 +65,10 @@ function newReport() {
     form.chartConfig = '{\n  xAxis: {\n    type: "category",\n    data: data.rows.map(r => r.name)\n  },\n  yAxis: {\n    type: "value"\n  },\n  series: [\n    {\n      data: data.rows.map(r => r.value),\n      type: "bar"\n    }\n  ]\n}';
     previewId.value = '';
 }
+/**
+ * 选中报表
+ * @param id 报表ID
+ */
 async function onSelectReport(id) {
     selectedReportId.value = id;
     const { data } = await getReportMeta(id);
@@ -62,12 +82,18 @@ async function onSelectReport(id) {
     form.chartConfig = data.chartConfig || '{}';
     previewReport();
 }
+/**
+ * 视图切换回调
+ */
 function onViewChange() {
     // Automatically load default config or refresh mapping
     if (form.chartType === 'Table') {
         // We can preview directly if saved
     }
 }
+/**
+ * 保存报表配置
+ */
 async function save() {
     if (!form.name || !form.viewId) {
         ElMessage.error('请填写名称并选择视图');
@@ -85,6 +111,9 @@ async function save() {
         ElMessage.error('保存失败: ' + e.message);
     }
 }
+/**
+ * 触发报表预览刷新
+ */
 function previewReport() {
     if (form.id) {
         previewId.value = form.id;
@@ -98,17 +127,19 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "grid grid-cols-12 gap-3 h-[calc(100vh-120px)]" },
+    ...{ class: "rd-container" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-3 border border-solid border-gray-200 rounded p-2 overflow-auto bg-white" },
+    ...{ class: "rd-sidebar" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-2" },
+    ...{ class: "rd-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600" },
+    ...{ class: "rd-title" },
 });
 const __VLS_0 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -138,14 +169,14 @@ const __VLS_9 = __VLS_asFunctionalComponent(__VLS_8, new __VLS_8({
     modelValue: (__VLS_ctx.keyword),
     placeholder: "搜索",
     size: "small",
-    ...{ class: "mb-2" },
+    ...{ style: {} },
     clearable: true,
 }));
 const __VLS_10 = __VLS_9({
     modelValue: (__VLS_ctx.keyword),
     placeholder: "搜索",
     size: "small",
-    ...{ class: "mb-2" },
+    ...{ style: {} },
     clearable: true,
 }, ...__VLS_functionalComponentArgsRest(__VLS_9));
 const __VLS_12 = {}.ElMenu;
@@ -154,12 +185,12 @@ const __VLS_12 = {}.ElMenu;
 const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.selectedReportId),
-    ...{ class: "border-0" },
+    ...{ style: {} },
 }));
 const __VLS_14 = __VLS_13({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.selectedReportId),
-    ...{ class: "border-0" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_13));
 let __VLS_16;
 let __VLS_17;
@@ -182,27 +213,27 @@ for (const [r] of __VLS_getVForSourceType((__VLS_ctx.filteredReports))) {
     }, ...__VLS_functionalComponentArgsRest(__VLS_21));
     __VLS_23.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex flex-col" },
+        ...{ class: "rd-flex-col" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: "truncate" },
+        ...{ class: "rd-truncate" },
     });
     (r.name);
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: "text-xs text-gray-500 truncate" },
+        ...{ class: "rd-subtext" },
     });
     (r.id);
     var __VLS_23;
 }
 var __VLS_15;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-4 flex flex-col gap-3" },
+    ...{ class: "rd-main" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "border border-solid border-gray-200 rounded p-3 bg-white" },
+    ...{ class: "rd-panel" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center gap-2 mb-2" },
+    ...{ class: "rd-toolbar" },
 });
 const __VLS_24 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
@@ -210,12 +241,12 @@ const __VLS_24 = {}.ElInput;
 const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({
     modelValue: (__VLS_ctx.form.name),
     placeholder: "报表名称",
-    ...{ class: "flex-1" },
+    ...{ style: {} },
 }));
 const __VLS_26 = __VLS_25({
     modelValue: (__VLS_ctx.form.name),
     placeholder: "报表名称",
-    ...{ class: "flex-1" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 const __VLS_28 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -242,12 +273,12 @@ const __VLS_36 = {}.ElForm;
 const __VLS_37 = __VLS_asFunctionalComponent(__VLS_36, new __VLS_36({
     labelWidth: "100px",
     size: "small",
-    ...{ class: "mt-4" },
+    ...{ style: {} },
 }));
 const __VLS_38 = __VLS_37({
     labelWidth: "100px",
     size: "small",
-    ...{ class: "mt-4" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_37));
 __VLS_39.slots.default;
 const __VLS_40 = {}.ElFormItem;
@@ -267,13 +298,13 @@ const __VLS_45 = __VLS_asFunctionalComponent(__VLS_44, new __VLS_44({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.form.viewId),
     placeholder: "请选择视图",
-    ...{ class: "w-full" },
+    ...{ style: {} },
 }));
 const __VLS_46 = __VLS_45({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.form.viewId),
     placeholder: "请选择视图",
-    ...{ class: "w-full" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_45));
 let __VLS_48;
 let __VLS_49;
@@ -371,12 +402,12 @@ if (__VLS_ctx.form.chartType === 'Excel') {
     const __VLS_81 = __VLS_asFunctionalComponent(__VLS_80, new __VLS_80({
         modelValue: (__VLS_ctx.form.templateId),
         placeholder: "请选择模板",
-        ...{ class: "w-full" },
+        ...{ style: {} },
     }));
     const __VLS_82 = __VLS_81({
         modelValue: (__VLS_ctx.form.templateId),
         placeholder: "请选择模板",
-        ...{ class: "w-full" },
+        ...{ style: {} },
     }, ...__VLS_functionalComponentArgsRest(__VLS_81));
     __VLS_83.slots.default;
     for (const [t] of __VLS_getVForSourceType((__VLS_ctx.templates))) {
@@ -421,22 +452,22 @@ const __VLS_94 = __VLS_93({
     step: (5),
 }, ...__VLS_functionalComponentArgsRest(__VLS_93));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-    ...{ class: "ml-2 text-xs text-gray-400" },
+    ...{ class: "rd-hint" },
 });
 var __VLS_91;
 var __VLS_39;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "border border-solid border-gray-200 rounded p-3 flex-1 overflow-auto bg-white flex flex-col" },
+    ...{ class: "rd-panel-flex" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600 mb-2" },
+    ...{ class: "rd-subtitle" },
 });
 if (__VLS_ctx.form.chartType === 'Table') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex-1" },
+        ...{ style: {} },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "text-xs text-gray-500 mb-2" },
+        ...{ class: "rd-desc" },
     });
     const __VLS_96 = {}.Codemirror;
     /** @type {[typeof __VLS_components.Codemirror, ]} */ ;
@@ -454,10 +485,10 @@ if (__VLS_ctx.form.chartType === 'Table') {
 }
 if (__VLS_ctx.form.chartType === 'EChart') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex-1" },
+        ...{ style: {} },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "text-xs text-gray-500 mb-2" },
+        ...{ class: "rd-desc" },
     });
     const __VLS_100 = {}.Codemirror;
     /** @type {[typeof __VLS_components.Codemirror, ]} */ ;
@@ -474,13 +505,13 @@ if (__VLS_ctx.form.chartType === 'EChart') {
     }, ...__VLS_functionalComponentArgsRest(__VLS_101));
 }
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-5 border border-solid border-gray-200 rounded p-3 overflow-auto bg-gray-50 relative" },
+    ...{ class: "rd-preview" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-2" },
+    ...{ class: "rd-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600" },
+    ...{ class: "rd-title" },
 });
 const __VLS_104 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -504,7 +535,7 @@ const __VLS_111 = {
 __VLS_107.slots.default;
 var __VLS_107;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "h-[calc(100%-40px)] w-full bg-white relative" },
+    ...{ class: "rd-preview-content" },
 });
 if (__VLS_ctx.previewId) {
     /** @type {[typeof PprReportViewer, ]} */ ;
@@ -529,90 +560,25 @@ else {
         description: "请先保存报表再预览",
     }, ...__VLS_functionalComponentArgsRest(__VLS_116));
 }
-/** @type {__VLS_StyleScopedClasses['grid']} */ ;
-/** @type {__VLS_StyleScopedClasses['grid-cols-12']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-[calc(100vh-120px)]']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-0']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['truncate']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['truncate']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['ml-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-400']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-5']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-gray-50']} */ ;
-/** @type {__VLS_StyleScopedClasses['relative']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-[calc(100%-40px)]']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-white']} */ ;
-/** @type {__VLS_StyleScopedClasses['relative']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-sidebar']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-flex-col']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-truncate']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-subtext']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-main']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-panel']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-toolbar']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-hint']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-panel-flex']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-subtitle']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-desc']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-desc']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-preview']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['rd-preview-content']} */ ;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {

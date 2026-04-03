@@ -1,26 +1,27 @@
+<!-- 视图设计器组件 -->
 <template>
-  <div class="grid grid-cols-12 gap-3 h-[calc(100vh-120px)]">
-    <div class="col-span-3 border border-solid border-gray-200 rounded p-2 overflow-auto">
-      <div class="flex items-center justify-between mb-2">
-        <div class="font-600">视图列表</div>
+  <div class="vd-container">
+    <div class="vd-sidebar">
+      <div class="vd-header">
+        <div class="vd-title">视图列表</div>
         <el-button size="small" type="primary" @click="newView">新建</el-button>
       </div>
-      <el-input v-model="keyword" placeholder="搜索" size="small" class="mb-2" clearable />
-      <el-menu :default-active="selectedViewId" @select="onSelectView" class="border-0">
+      <el-input v-model="keyword" placeholder="搜索" size="small" style="margin-bottom: 8px;" clearable />
+      <el-menu :default-active="selectedViewId" @select="onSelectView" style="border: 0;">
         <el-menu-item v-for="v in filteredViews" :key="v.id" :index="v.id">
-          <div class="flex flex-col">
-            <span class="truncate">{{ v.name }}</span>
-            <span class="text-xs text-gray-500 truncate">{{ v.id }}</span>
+          <div class="vd-flex-col">
+            <span class="vd-truncate">{{ v.name }}</span>
+            <span class="vd-subtext">{{ v.id }}</span>
           </div>
         </el-menu-item>
       </el-menu>
     </div>
 
-    <div class="col-span-6 flex flex-col gap-3">
-      <div class="border border-solid border-gray-200 rounded p-3">
-        <div class="flex items-center gap-2 mb-2">
-          <el-input v-model="viewForm.name" placeholder="视图名称" class="flex-1" />
-          <el-select v-model="viewForm.datasourceId" placeholder="选择数据源" class="w-56">
+    <div class="vd-main">
+      <div class="vd-panel">
+        <div class="vd-toolbar">
+          <el-input v-model="viewForm.name" placeholder="视图名称" style="flex: 1;" />
+          <el-select v-model="viewForm.datasourceId" placeholder="选择数据源" style="width: 224px;">
             <el-option v-for="ds in datasources" :key="ds.id" :label="ds.name" :value="ds.id" />
           </el-select>
           <el-button type="primary" @click="save">保存</el-button>
@@ -30,9 +31,9 @@
         <Codemirror v-model="viewForm.sqlContent" :extensions="editorExtensions" :style="{ height: '320px' }" />
       </div>
 
-      <div class="border border-solid border-gray-200 rounded p-3 flex-1 overflow-auto">
-        <div class="flex items-center justify-between mb-2">
-          <div class="font-600">参数配置</div>
+      <div class="vd-panel-flex">
+        <div class="vd-header">
+          <div class="vd-title">参数配置</div>
           <el-button size="small" @click="addParam">新增参数</el-button>
         </div>
 
@@ -44,7 +45,7 @@
           </el-table-column>
           <el-table-column label="类型" width="140">
             <template #default="{ row }">
-              <el-select v-model="row.paramType" class="w-full">
+              <el-select v-model="row.paramType" style="width: 100%;">
                 <el-option label="String" value="String" />
                 <el-option label="Number" value="Number" />
                 <el-option label="Date" value="Date" />
@@ -75,9 +76,9 @@
       </div>
     </div>
 
-    <div class="col-span-3 border border-solid border-gray-200 rounded p-3 overflow-auto">
-      <div class="flex items-center justify-between mb-2">
-        <div class="font-600">预览结果</div>
+    <div class="vd-preview">
+      <div class="vd-header">
+        <div class="vd-title">预览结果</div>
         <el-tag v-if="preview.columns.length" type="success" size="small">{{ preview.rows.length }} 行</el-tag>
       </div>
       <el-table v-if="preview.columns.length" :data="preview.rows" border size="small" height="calc(100vh - 190px)">
@@ -98,13 +99,19 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { listDatasources, type Datasource } from '@/api/datasource'
 import { getView, listViews, previewView, saveView, type View, type ViewExecutionResult, type ViewParam } from '@/api/view'
 
+// 视图参数草稿类型定义
 type ViewParamDraft = ViewParam & { testValue?: string }
 
+// 数据源列表
 const datasources = ref<Datasource[]>([])
+// 视图列表
 const views = ref<View[]>([])
+// 搜索关键字
 const keyword = ref('')
+// 选中的视图ID
 const selectedViewId = ref('')
 
+// 视图表单数据
 const viewForm = reactive<Partial<View>>({
   id: '',
   datasourceId: '',
@@ -112,21 +119,28 @@ const viewForm = reactive<Partial<View>>({
   sqlContent: 'select 1 as value',
 })
 
+// 参数定义列表
 const paramDefs = ref<ViewParamDraft[]>([])
 
+// 预览结果数据
 const preview = reactive<ViewExecutionResult>({
   columns: [],
   rows: [],
 })
 
+// CodeMirror 编辑器扩展
 const editorExtensions = [sql(), oneDark]
 
+// 过滤后的视图列表
 const filteredViews = computed(() => {
   const k = keyword.value.trim().toLowerCase()
   if (!k) return views.value
   return views.value.filter((v) => v.name.toLowerCase().includes(k) || v.id.toLowerCase().includes(k))
 })
 
+/**
+ * 构建参数映射对象
+ */
 function buildParamsMap() {
   const params: Record<string, unknown> = {}
   for (const p of paramDefs.value) {
@@ -138,6 +152,9 @@ function buildParamsMap() {
   return params
 }
 
+/**
+ * 重新加载数据源列表
+ */
 async function reloadDatasources() {
   const { data } = await listDatasources()
   datasources.value = data
@@ -146,11 +163,17 @@ async function reloadDatasources() {
   }
 }
 
+/**
+ * 重新加载视图列表
+ */
 async function reloadViews() {
   const { data } = await listViews()
   views.value = data
 }
 
+/**
+ * 新建视图
+ */
 function newView() {
   selectedViewId.value = ''
   viewForm.id = ''
@@ -162,14 +185,25 @@ function newView() {
   preview.rows = []
 }
 
+/**
+ * 新增参数定义
+ */
 function addParam() {
   paramDefs.value.push({ paramName: '', paramType: 'String', required: false, dictCode: '', testValue: '' })
 }
 
+/**
+ * 移除参数定义
+ * @param index 参数索引
+ */
 function removeParam(index: number) {
   paramDefs.value.splice(index, 1)
 }
 
+/**
+ * 选中视图处理
+ * @param id 视图ID
+ */
 async function onSelectView(id: string) {
   selectedViewId.value = id
   const { data } = await getView(id)
@@ -190,6 +224,9 @@ async function onSelectView(id: string) {
   preview.rows = []
 }
 
+/**
+ * 保存视图
+ */
 async function save() {
   if (!viewForm.name || !viewForm.datasourceId || !viewForm.sqlContent) {
     ElMessage.error('请补全视图名称、数据源与 SQL')
@@ -215,6 +252,9 @@ async function save() {
   await reloadViews()
 }
 
+/**
+ * 运行并预览视图结果
+ */
 async function runPreview() {
   if (!viewForm.datasourceId || !viewForm.sqlContent) {
     ElMessage.error('请先选择数据源并输入 SQL')
@@ -246,3 +286,102 @@ onMounted(async () => {
   await reloadViews()
 })
 </script>
+
+<style scoped>
+/* 整体栅格容器 */
+.vd-container {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+  height: calc(100vh - 120px);
+}
+
+/* 左侧边栏 */
+.vd-sidebar {
+  grid-column: span 3 / span 3;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 8px;
+  overflow: auto;
+  background-color: #fff;
+}
+
+/* 头部样式 */
+.vd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* 标题样式 */
+.vd-title {
+  font-weight: 600;
+}
+
+/* 垂直弹性布局 */
+.vd-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 截断文本 */
+.vd-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 次要截断文本 */
+.vd-subtext {
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 中间主编辑区 */
+.vd-main {
+  grid-column: span 6 / span 6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 面板样式 */
+.vd-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: #fff;
+}
+
+/* 弹性面板样式 */
+.vd-panel-flex {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  flex: 1;
+  overflow: auto;
+  background-color: #fff;
+}
+
+/* 工具栏样式 */
+.vd-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* 右侧预览区 */
+.vd-preview {
+  grid-column: span 3 / span 3;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  overflow: auto;
+  background-color: #fff;
+}
+</style>

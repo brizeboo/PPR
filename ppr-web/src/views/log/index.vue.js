@@ -1,20 +1,34 @@
 import { ref, onMounted } from 'vue';
 import { getLogPage } from '@/api/log';
+// 加载状态
 const loading = ref(false);
+// 表格数据
 const tableData = ref([]);
+// 数据总条数
 const total = ref(0);
+// 查询条件
 const query = ref({});
+// 日期范围
 const dateRange = ref([]);
+// 分页信息
 const page = ref({ current: 1, size: 20 });
+// 详情弹窗控制
 const dialogVisible = ref(false);
+// 当前展示的日志数据
 const currentLog = ref({});
 onMounted(() => {
     fetchData();
 });
+/**
+ * 触发查询
+ */
 function handleSearch() {
     page.value.current = 1;
     fetchData();
 }
+/**
+ * 获取分页数据
+ */
 async function fetchData() {
     loading.value = true;
     try {
@@ -31,10 +45,18 @@ async function fetchData() {
         loading.value = false;
     }
 }
+/**
+ * 展示日志详情
+ * @param row 日志行数据
+ */
 function showDetail(row) {
     currentLog.value = row;
     dialogVisible.value = true;
 }
+/**
+ * 格式化时间戳
+ * @param timestamp 时间戳
+ */
 function formatDate(timestamp) {
     if (!timestamp)
         return '';
@@ -45,14 +67,16 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "h-full flex flex-col" },
+    ...{ class: "log-container" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex justify-between mb-4 gap-4" },
+    ...{ class: "log-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex gap-2 items-center" },
+    ...{ class: "log-filters" },
 });
 const __VLS_0 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
@@ -61,14 +85,14 @@ const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
     ...{ 'onClear': {} },
     modelValue: (__VLS_ctx.query.type),
     placeholder: "操作类型",
-    ...{ class: "w-48" },
+    ...{ class: "log-input-type" },
     clearable: true,
 }));
 const __VLS_2 = __VLS_1({
     ...{ 'onClear': {} },
     modelValue: (__VLS_ctx.query.type),
     placeholder: "操作类型",
-    ...{ class: "w-48" },
+    ...{ class: "log-input-type" },
     clearable: true,
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 let __VLS_4;
@@ -85,14 +109,14 @@ const __VLS_9 = __VLS_asFunctionalComponent(__VLS_8, new __VLS_8({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.query.status),
     placeholder: "执行状态",
-    ...{ class: "w-32" },
+    ...{ class: "log-select-status" },
     clearable: true,
 }));
 const __VLS_10 = __VLS_9({
     ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.query.status),
     placeholder: "执行状态",
-    ...{ class: "w-32" },
+    ...{ class: "log-select-status" },
     clearable: true,
 }, ...__VLS_functionalComponentArgsRest(__VLS_9));
 let __VLS_12;
@@ -135,7 +159,7 @@ const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({
     rangeSeparator: "至",
     startPlaceholder: "开始日期",
     endPlaceholder: "结束日期",
-    ...{ class: "w-64" },
+    ...{ class: "log-date-picker" },
 }));
 const __VLS_26 = __VLS_25({
     ...{ 'onChange': {} },
@@ -144,7 +168,7 @@ const __VLS_26 = __VLS_25({
     rangeSeparator: "至",
     startPlaceholder: "开始日期",
     endPlaceholder: "结束日期",
-    ...{ class: "w-64" },
+    ...{ class: "log-date-picker" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 let __VLS_28;
 let __VLS_29;
@@ -179,13 +203,13 @@ const __VLS_41 = __VLS_asFunctionalComponent(__VLS_40, new __VLS_40({
     data: (__VLS_ctx.tableData),
     border: true,
     stripe: true,
-    ...{ class: "flex-1" },
+    ...{ class: "log-table" },
 }));
 const __VLS_42 = __VLS_41({
     data: (__VLS_ctx.tableData),
     border: true,
     stripe: true,
-    ...{ class: "flex-1" },
+    ...{ class: "log-table" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_41));
 __VLS_asFunctionalDirective(__VLS_directives.vLoading)(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.loading) }, null, null);
 __VLS_43.slots.default;
@@ -272,7 +296,7 @@ __VLS_67.slots.default;
     const { default: __VLS_thisSlot } = __VLS_67.slots;
     const [{ row }] = __VLS_getSlotParams(__VLS_thisSlot);
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: (row.costMs > 1000 ? 'text-red-500' : '') },
+        ...{ class: ({ 'log-text-danger': row.costMs > 1000 }) },
     });
     (row.costMs);
 }
@@ -370,7 +394,7 @@ __VLS_83.slots.default;
 var __VLS_83;
 var __VLS_43;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "mt-4 flex justify-end" },
+    ...{ class: "log-pagination" },
 });
 const __VLS_92 = {}.ElPagination;
 /** @type {[typeof __VLS_components.ElPagination, typeof __VLS_components.elPagination, ]} */ ;
@@ -464,7 +488,7 @@ const __VLS_119 = __VLS_118({
 }, ...__VLS_functionalComponentArgsRest(__VLS_118));
 __VLS_120.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.pre, __VLS_intrinsicElements.pre)({
-    ...{ class: "bg-gray-100 p-2 rounded max-h-48 overflow-auto" },
+    ...{ class: "log-params" },
 });
 (__VLS_ctx.currentLog.params);
 var __VLS_120;
@@ -504,39 +528,23 @@ if (__VLS_ctx.currentLog.errorMsg) {
     }, ...__VLS_functionalComponentArgsRest(__VLS_130));
     __VLS_132.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "text-red-500 whitespace-pre-wrap max-h-64 overflow-auto" },
+        ...{ class: "log-error" },
     });
     (__VLS_ctx.currentLog.errorMsg);
     var __VLS_132;
 }
 var __VLS_108;
 var __VLS_104;
-/** @type {__VLS_StyleScopedClasses['h-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-48']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-32']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-64']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-end']} */ ;
-/** @type {__VLS_StyleScopedClasses['bg-gray-100']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['max-h-48']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-red-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['whitespace-pre-wrap']} */ ;
-/** @type {__VLS_StyleScopedClasses['max-h-64']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-filters']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-input-type']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-select-status']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-date-picker']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-table']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-pagination']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-params']} */ ;
+/** @type {__VLS_StyleScopedClasses['log-error']} */ ;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {

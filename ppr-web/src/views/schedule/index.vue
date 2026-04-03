@@ -1,13 +1,14 @@
+<!-- 定时任务管理组件 -->
 <template>
-  <div class="h-full flex flex-col">
-    <div class="flex justify-between mb-4">
+  <div class="schedule-container">
+    <div class="schedule-header">
       <div>
         <el-button type="primary" @click="handleCreate">新增定时任务</el-button>
         <el-button @click="handleMailConfig">全局 SMTP 配置</el-button>
       </div>
     </div>
 
-    <el-table :data="tableData" border stripe class="flex-1" v-loading="loading">
+    <el-table :data="tableData" border stripe class="schedule-table" v-loading="loading">
       <el-table-column prop="id" label="任务ID" width="280" />
       <el-table-column prop="reportId" label="关联报表ID" />
       <el-table-column prop="cron" label="Cron表达式" />
@@ -39,7 +40,7 @@
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
         <el-form-item label="关联报表" prop="reportId">
-          <el-select v-model="form.reportId" placeholder="请选择报表" class="w-full">
+          <el-select v-model="form.reportId" placeholder="请选择报表" class="schedule-select-full">
             <el-option
               v-for="item in reports"
               :key="item.id"
@@ -93,7 +94,7 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <div class="flex justify-between">
+        <div class="schedule-dialog-footer">
           <div>
             <el-button type="success" @click="testMail" :loading="testLoading">测试发信</el-button>
           </div>
@@ -114,33 +115,48 @@ import { getScheduleList, saveSchedule, changeScheduleStatus, deleteSchedule } f
 import { getMailConfig, saveMailConfig, testMailSend } from '@/api/mail'
 import { listReports, type Report } from '@/api/report'
 
+// 表格加载状态
 const loading = ref(false)
+// 定时任务数据列表
 const tableData = ref<any[]>([])
+// 报表数据列表
 const reports = ref<Report[]>([])
 
+// 任务表单弹窗可见性
 const dialogVisible = ref(false)
+// 任务表单标题
 const dialogTitle = ref('新增任务')
+// 提交按钮加载状态
 const submitLoading = ref(false)
+// 任务表单引用
 const formRef = ref()
+// 任务表单数据
 const form = ref<any>({
   status: 1
 })
 
+// SMTP配置弹窗可见性
 const mailDialogVisible = ref(false)
+// SMTP表单引用
 const mailFormRef = ref()
+// SMTP表单数据
 const mailForm = ref<any>({
   port: 465,
   protocol: 'smtp'
 })
+// SMTP提交按钮加载状态
 const mailSubmitLoading = ref(false)
+// 测试邮件发送按钮加载状态
 const testLoading = ref(false)
 
+// 任务表单验证规则
 const rules = {
   reportId: [{ required: true, message: '请选择报表', trigger: 'change' }],
   cron: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }],
   receivers: [{ required: true, message: '请输入收件人', trigger: 'blur' }]
 }
 
+// SMTP表单验证规则
 const mailRules = {
   host: [{ required: true, message: '请输入服务器地址', trigger: 'blur' }],
   port: [{ required: true, message: '请输入端口', trigger: 'blur' }],
@@ -156,6 +172,9 @@ onMounted(async () => {
   } catch (e) {}
 })
 
+/**
+ * 获取定时任务列表
+ */
 async function fetchData() {
   loading.value = true
   try {
@@ -166,18 +185,30 @@ async function fetchData() {
   }
 }
 
+/**
+ * 打开新增任务弹窗
+ */
 function handleCreate() {
   dialogTitle.value = '新增任务'
   form.value = { status: 1 }
   dialogVisible.value = true
 }
 
+/**
+ * 打开编辑任务弹窗
+ * @param row 当前任务数据
+ */
 function handleEdit(row: any) {
   dialogTitle.value = '编辑任务'
   form.value = { ...row }
   dialogVisible.value = true
 }
 
+/**
+ * 修改任务状态
+ * @param row 当前任务数据
+ * @param val 新状态值
+ */
 async function handleStatusChange(row: any, val: number) {
   try {
     await changeScheduleStatus(row.id, val)
@@ -188,6 +219,10 @@ async function handleStatusChange(row: any, val: number) {
   }
 }
 
+/**
+ * 删除任务
+ * @param row 当前任务数据
+ */
 async function handleDelete(row: any) {
   try {
     await deleteSchedule(row.id)
@@ -198,6 +233,10 @@ async function handleDelete(row: any) {
   }
 }
 
+/**
+ * 立即执行任务
+ * @param row 当前任务数据
+ */
 function handleExecute(row: any) {
   ElMessageBox.prompt('请输入临时接收邮箱（如果不输入则发给配置的收件人）', '立即执行', {
     confirmButtonText: '确定',
@@ -208,6 +247,9 @@ function handleExecute(row: any) {
   }).catch(() => {})
 }
 
+/**
+ * 提交任务表单
+ */
 async function submitForm() {
   await formRef.value.validate()
   submitLoading.value = true
@@ -221,6 +263,9 @@ async function submitForm() {
   }
 }
 
+/**
+ * 打开全局SMTP配置弹窗
+ */
 async function handleMailConfig() {
   try {
     const res = await getMailConfig()
@@ -235,6 +280,9 @@ async function handleMailConfig() {
   mailDialogVisible.value = true
 }
 
+/**
+ * 提交SMTP配置表单
+ */
 async function submitMailForm() {
   await mailFormRef.value.validate()
   mailSubmitLoading.value = true
@@ -247,6 +295,9 @@ async function submitMailForm() {
   }
 }
 
+/**
+ * 测试发送邮件
+ */
 async function testMail() {
   await mailFormRef.value.validate()
   ElMessageBox.prompt('请输入测试接收邮箱', '测试发信', {
@@ -267,3 +318,36 @@ async function testMail() {
   }).catch(() => {})
 }
 </script>
+
+<style scoped>
+/* 整体容器 */
+.schedule-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部操作区 */
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* 表格主体 */
+.schedule-table {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 充满宽度的选择框 */
+.schedule-select-full {
+  width: 100%;
+}
+
+/* 弹窗底部操作区 */
+.schedule-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+}
+</style>

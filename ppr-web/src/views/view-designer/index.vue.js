@@ -5,28 +5,40 @@ import { sql } from '@codemirror/lang-sql';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { listDatasources } from '@/api/datasource';
 import { getView, listViews, previewView, saveView } from '@/api/view';
+// 数据源列表
 const datasources = ref([]);
+// 视图列表
 const views = ref([]);
+// 搜索关键字
 const keyword = ref('');
+// 选中的视图ID
 const selectedViewId = ref('');
+// 视图表单数据
 const viewForm = reactive({
     id: '',
     datasourceId: '',
     name: '',
     sqlContent: 'select 1 as value',
 });
+// 参数定义列表
 const paramDefs = ref([]);
+// 预览结果数据
 const preview = reactive({
     columns: [],
     rows: [],
 });
+// CodeMirror 编辑器扩展
 const editorExtensions = [sql(), oneDark];
+// 过滤后的视图列表
 const filteredViews = computed(() => {
     const k = keyword.value.trim().toLowerCase();
     if (!k)
         return views.value;
     return views.value.filter((v) => v.name.toLowerCase().includes(k) || v.id.toLowerCase().includes(k));
 });
+/**
+ * 构建参数映射对象
+ */
 function buildParamsMap() {
     const params = {};
     for (const p of paramDefs.value) {
@@ -38,6 +50,9 @@ function buildParamsMap() {
     }
     return params;
 }
+/**
+ * 重新加载数据源列表
+ */
 async function reloadDatasources() {
     const { data } = await listDatasources();
     datasources.value = data;
@@ -45,10 +60,16 @@ async function reloadDatasources() {
         viewForm.datasourceId = data[0].id;
     }
 }
+/**
+ * 重新加载视图列表
+ */
 async function reloadViews() {
     const { data } = await listViews();
     views.value = data;
 }
+/**
+ * 新建视图
+ */
 function newView() {
     selectedViewId.value = '';
     viewForm.id = '';
@@ -60,12 +81,23 @@ function newView() {
     preview.columns = [];
     preview.rows = [];
 }
+/**
+ * 新增参数定义
+ */
 function addParam() {
     paramDefs.value.push({ paramName: '', paramType: 'String', required: false, dictCode: '', testValue: '' });
 }
+/**
+ * 移除参数定义
+ * @param index 参数索引
+ */
 function removeParam(index) {
     paramDefs.value.splice(index, 1);
 }
+/**
+ * 选中视图处理
+ * @param id 视图ID
+ */
 async function onSelectView(id) {
     selectedViewId.value = id;
     const { data } = await getView(id);
@@ -85,6 +117,9 @@ async function onSelectView(id) {
     preview.columns = [];
     preview.rows = [];
 }
+/**
+ * 保存视图
+ */
 async function save() {
     if (!viewForm.name || !viewForm.datasourceId || !viewForm.sqlContent) {
         ElMessage.error('请补全视图名称、数据源与 SQL');
@@ -109,6 +144,9 @@ async function save() {
     ElMessage.success('保存成功');
     await reloadViews();
 }
+/**
+ * 运行并预览视图结果
+ */
 async function runPreview() {
     if (!viewForm.datasourceId || !viewForm.sqlContent) {
         ElMessage.error('请先选择数据源并输入 SQL');
@@ -141,17 +179,19 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "grid grid-cols-12 gap-3 h-[calc(100vh-120px)]" },
+    ...{ class: "vd-container" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-3 border border-solid border-gray-200 rounded p-2 overflow-auto" },
+    ...{ class: "vd-sidebar" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-2" },
+    ...{ class: "vd-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600" },
+    ...{ class: "vd-title" },
 });
 const __VLS_0 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -181,14 +221,14 @@ const __VLS_9 = __VLS_asFunctionalComponent(__VLS_8, new __VLS_8({
     modelValue: (__VLS_ctx.keyword),
     placeholder: "搜索",
     size: "small",
-    ...{ class: "mb-2" },
+    ...{ style: {} },
     clearable: true,
 }));
 const __VLS_10 = __VLS_9({
     modelValue: (__VLS_ctx.keyword),
     placeholder: "搜索",
     size: "small",
-    ...{ class: "mb-2" },
+    ...{ style: {} },
     clearable: true,
 }, ...__VLS_functionalComponentArgsRest(__VLS_9));
 const __VLS_12 = {}.ElMenu;
@@ -197,12 +237,12 @@ const __VLS_12 = {}.ElMenu;
 const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.selectedViewId),
-    ...{ class: "border-0" },
+    ...{ style: {} },
 }));
 const __VLS_14 = __VLS_13({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.selectedViewId),
-    ...{ class: "border-0" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_13));
 let __VLS_16;
 let __VLS_17;
@@ -225,27 +265,27 @@ for (const [v] of __VLS_getVForSourceType((__VLS_ctx.filteredViews))) {
     }, ...__VLS_functionalComponentArgsRest(__VLS_21));
     __VLS_23.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "flex flex-col" },
+        ...{ class: "vd-flex-col" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: "truncate" },
+        ...{ class: "vd-truncate" },
     });
     (v.name);
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
-        ...{ class: "text-xs text-gray-500 truncate" },
+        ...{ class: "vd-subtext" },
     });
     (v.id);
     var __VLS_23;
 }
 var __VLS_15;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-6 flex flex-col gap-3" },
+    ...{ class: "vd-main" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "border border-solid border-gray-200 rounded p-3" },
+    ...{ class: "vd-panel" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center gap-2 mb-2" },
+    ...{ class: "vd-toolbar" },
 });
 const __VLS_24 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
@@ -253,12 +293,12 @@ const __VLS_24 = {}.ElInput;
 const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({
     modelValue: (__VLS_ctx.viewForm.name),
     placeholder: "视图名称",
-    ...{ class: "flex-1" },
+    ...{ style: {} },
 }));
 const __VLS_26 = __VLS_25({
     modelValue: (__VLS_ctx.viewForm.name),
     placeholder: "视图名称",
-    ...{ class: "flex-1" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 const __VLS_28 = {}.ElSelect;
 /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
@@ -266,12 +306,12 @@ const __VLS_28 = {}.ElSelect;
 const __VLS_29 = __VLS_asFunctionalComponent(__VLS_28, new __VLS_28({
     modelValue: (__VLS_ctx.viewForm.datasourceId),
     placeholder: "选择数据源",
-    ...{ class: "w-56" },
+    ...{ style: {} },
 }));
 const __VLS_30 = __VLS_29({
     modelValue: (__VLS_ctx.viewForm.datasourceId),
     placeholder: "选择数据源",
-    ...{ class: "w-56" },
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_29));
 __VLS_31.slots.default;
 for (const [ds] of __VLS_getVForSourceType((__VLS_ctx.datasources))) {
@@ -340,13 +380,13 @@ const __VLS_54 = __VLS_53({
     ...{ style: ({ height: '320px' }) },
 }, ...__VLS_functionalComponentArgsRest(__VLS_53));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "border border-solid border-gray-200 rounded p-3 flex-1 overflow-auto" },
+    ...{ class: "vd-panel-flex" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-2" },
+    ...{ class: "vd-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600" },
+    ...{ class: "vd-title" },
 });
 const __VLS_56 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -429,11 +469,11 @@ __VLS_79.slots.default;
     // @ts-ignore
     const __VLS_81 = __VLS_asFunctionalComponent(__VLS_80, new __VLS_80({
         modelValue: (row.paramType),
-        ...{ class: "w-full" },
+        ...{ style: {} },
     }));
     const __VLS_82 = __VLS_81({
         modelValue: (row.paramType),
-        ...{ class: "w-full" },
+        ...{ style: {} },
     }, ...__VLS_functionalComponentArgsRest(__VLS_81));
     __VLS_83.slots.default;
     const __VLS_84 = {}.ElOption;
@@ -602,13 +642,13 @@ __VLS_123.slots.default;
 var __VLS_123;
 var __VLS_67;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "col-span-3 border border-solid border-gray-200 rounded p-3 overflow-auto" },
+    ...{ class: "vd-preview" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "flex items-center justify-between mb-2" },
+    ...{ class: "vd-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "font-600" },
+    ...{ class: "vd-title" },
 });
 if (__VLS_ctx.preview.columns.length) {
     const __VLS_132 = {}.ElTag;
@@ -675,70 +715,22 @@ else {
         description: "暂无数据",
     }, ...__VLS_functionalComponentArgsRest(__VLS_145));
 }
-/** @type {__VLS_StyleScopedClasses['grid']} */ ;
-/** @type {__VLS_StyleScopedClasses['grid-cols-12']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-[calc(100vh-120px)]']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-0']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['truncate']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['truncate']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-6']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-col']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['gap-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-56']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
-/** @type {__VLS_StyleScopedClasses['col-span-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['border']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['rounded']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-3']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-sidebar']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-flex-col']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-truncate']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-subtext']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-main']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-panel']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-toolbar']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-panel-flex']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-preview']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['vd-title']} */ ;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {

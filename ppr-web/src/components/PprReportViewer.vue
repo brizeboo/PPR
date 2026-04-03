@@ -1,7 +1,8 @@
+<!-- 报表预览/查看组件 -->
 <template>
-  <div class="ppr-report-viewer w-full h-full flex flex-col">
+  <div class="ppr-report-viewer prv-container">
     <!-- Query Form -->
-    <div v-if="meta?.params && meta.params.length > 0" class="mb-4 border border-solid border-gray-200 p-3 rounded bg-white">
+    <div v-if="meta?.params && meta.params.length > 0" class="prv-query-form">
       <el-form :inline="true" :model="queryParams" @submit.prevent="fetchData">
         <el-form-item v-for="p in meta.params" :key="p.paramName" :label="p.paramName">
           <el-input v-model="queryParams[p.paramName]" :placeholder="p.paramType" clearable />
@@ -13,7 +14,7 @@
     </div>
 
     <!-- Chart / Table -->
-    <div class="flex-1 overflow-hidden bg-white border border-solid border-gray-200 rounded p-3 relative" v-loading="loading">
+    <div class="prv-content" v-loading="loading">
       <template v-if="meta?.chartType === 'Table'">
         <el-table :data="tableData.rows" border height="100%">
           <el-table-column
@@ -29,7 +30,7 @@
       </template>
 
       <template v-else-if="meta?.chartType === 'EChart'">
-        <div ref="echartRef" class="w-full h-full"></div>
+        <div ref="echartRef" class="prv-echart"></div>
       </template>
 
       <template v-else-if="meta?.chartType === 'Excel'">
@@ -51,21 +52,35 @@ import { getReportMeta, getReportData, type ReportMetaResponse } from '@/api/rep
 import ExcelEditor from '@/components/ExcelEditor/index.vue'
 import { http } from '@/api/http'
 
+// 组件入参
 const props = defineProps<{
   reportId: string
 }>()
 
+// 加载状态
 const loading = ref(false)
+// 报表元数据
 const meta = ref<ReportMetaResponse | null>(null)
+// 查询参数
 const queryParams = ref<Record<string, any>>({})
+// 表格数据
 const tableData = ref<{ columns: string[]; rows: any[] }>({ columns: [], rows: [] })
+// 表格列配置
 const tableColumns = ref<any[]>([])
 
+// ECharts 容器引用
 const echartRef = ref<HTMLElement | null>(null)
+// Excel 编辑器引用
 const excelViewerRef = ref<InstanceType<typeof ExcelEditor> | null>(null)
+
+// ECharts 实例
 let chartInstance: echarts.ECharts | null = null
+// 轮询定时器
 let pollingTimer: number | null = null
 
+/**
+ * 初始化组件，加载元数据和数据
+ */
 async function init() {
   if (!props.reportId) return
   loading.value = true
@@ -100,6 +115,9 @@ async function init() {
   }
 }
 
+/**
+ * 获取报表数据
+ */
 async function fetchData() {
   if (!props.reportId || !meta.value) return
   loading.value = true
@@ -173,6 +191,10 @@ async function fetchData() {
   }
 }
 
+/**
+ * 启动数据轮询
+ * @param intervalSec 轮询间隔(秒)
+ */
 function startPolling(intervalSec: number) {
   stopPolling()
   pollingTimer = window.setInterval(() => {
@@ -180,6 +202,9 @@ function startPolling(intervalSec: number) {
   }, intervalSec * 1000)
 }
 
+/**
+ * 停止数据轮询
+ */
 function stopPolling() {
   if (pollingTimer) {
     clearInterval(pollingTimer)
@@ -187,10 +212,14 @@ function stopPolling() {
   }
 }
 
+/**
+ * 窗口大小变化时重置图表大小
+ */
 function handleResize() {
   chartInstance?.resize()
 }
 
+// 监听 reportId 变化重新加载
 watch(() => props.reportId, () => {
   stopPolling()
   if (chartInstance) {
@@ -213,3 +242,39 @@ onUnmounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* 报表查看器主容器 */
+.prv-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部查询表单区域 */
+.prv-query-form {
+  margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+/* 主体图表/表格展示区域 */
+.prv-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  position: relative;
+}
+
+/* ECharts 图表容器 */
+.prv-echart {
+  width: 100%;
+  height: 100%;
+}
+</style>

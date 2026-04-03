@@ -1,8 +1,12 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+// 当前路由实例
 const route = useRoute();
+// 路由导航实例
 const router = useRouter();
+// 计算当前激活的菜单路径
 const activePath = computed(() => route.path);
+// 根据当前路径计算顶部标题
 const title = computed(() => {
     if (route.path.startsWith('/datasource'))
         return '数据源管理';
@@ -18,6 +22,10 @@ const title = computed(() => {
         return '系统日志';
     return 'PPR';
 });
+/**
+ * 菜单选中事件处理
+ * @param index 选中的菜单索引（路径）
+ */
 function onSelect(index) {
     router.push(index);
 }
@@ -25,14 +33,16 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+// CSS variable injection 
+// CSS variable injection end 
 const __VLS_0 = {}.ElContainer;
 /** @type {[typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "h-screen" },
+    ...{ class: "admin-container" },
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "h-screen" },
+    ...{ class: "admin-container" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 var __VLS_4 = {};
 __VLS_3.slots.default;
@@ -41,15 +51,15 @@ const __VLS_5 = {}.ElAside;
 // @ts-ignore
 const __VLS_6 = __VLS_asFunctionalComponent(__VLS_5, new __VLS_5({
     width: "220px",
-    ...{ class: "border-r border-solid border-gray-200" },
+    ...{ class: "admin-aside" },
 }));
 const __VLS_7 = __VLS_6({
     width: "220px",
-    ...{ class: "border-r border-solid border-gray-200" },
+    ...{ class: "admin-aside" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_6));
 __VLS_8.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "h-14 flex items-center px-4 text-lg font-600" },
+    ...{ class: "aside-logo" },
 });
 const __VLS_9 = {}.ElMenu;
 /** @type {[typeof __VLS_components.ElMenu, typeof __VLS_components.elMenu, typeof __VLS_components.ElMenu, typeof __VLS_components.elMenu, ]} */ ;
@@ -57,12 +67,12 @@ const __VLS_9 = {}.ElMenu;
 const __VLS_10 = __VLS_asFunctionalComponent(__VLS_9, new __VLS_9({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.activePath),
-    ...{ class: "border-0" },
+    ...{ class: "aside-menu" },
 }));
 const __VLS_11 = __VLS_10({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.activePath),
-    ...{ class: "border-0" },
+    ...{ class: "aside-menu" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_10));
 let __VLS_13;
 let __VLS_14;
@@ -149,28 +159,28 @@ const __VLS_45 = {}.ElHeader;
 /** @type {[typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, ]} */ ;
 // @ts-ignore
 const __VLS_46 = __VLS_asFunctionalComponent(__VLS_45, new __VLS_45({
-    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+    ...{ class: "admin-header" },
 }));
 const __VLS_47 = __VLS_46({
-    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+    ...{ class: "admin-header" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_46));
 __VLS_48.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "px-4 font-500" },
+    ...{ class: "header-title" },
 });
 (__VLS_ctx.title);
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "px-4 text-sm text-gray-500" },
+    ...{ class: "header-user" },
 });
 var __VLS_48;
 const __VLS_49 = {}.ElMain;
 /** @type {[typeof __VLS_components.ElMain, typeof __VLS_components.elMain, typeof __VLS_components.ElMain, typeof __VLS_components.elMain, ]} */ ;
 // @ts-ignore
 const __VLS_50 = __VLS_asFunctionalComponent(__VLS_49, new __VLS_49({
-    ...{ class: "p-4 overflow-auto" },
+    ...{ class: "admin-main" },
 }));
 const __VLS_51 = __VLS_50({
-    ...{ class: "p-4 overflow-auto" },
+    ...{ class: "admin-main" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_50));
 __VLS_52.slots.default;
 const __VLS_53 = {}.RouterView;
@@ -181,31 +191,14 @@ const __VLS_55 = __VLS_54({}, ...__VLS_functionalComponentArgsRest(__VLS_54));
 var __VLS_52;
 var __VLS_44;
 var __VLS_3;
-/** @type {__VLS_StyleScopedClasses['h-screen']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-r']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-14']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-lg']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-600']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-0']} */ ;
-/** @type {__VLS_StyleScopedClasses['h-14']} */ ;
-/** @type {__VLS_StyleScopedClasses['flex']} */ ;
-/** @type {__VLS_StyleScopedClasses['items-center']} */ ;
-/** @type {__VLS_StyleScopedClasses['justify-between']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-b']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-solid']} */ ;
-/** @type {__VLS_StyleScopedClasses['border-gray-200']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['font-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-sm']} */ ;
-/** @type {__VLS_StyleScopedClasses['text-gray-500']} */ ;
-/** @type {__VLS_StyleScopedClasses['p-4']} */ ;
-/** @type {__VLS_StyleScopedClasses['overflow-auto']} */ ;
+/** @type {__VLS_StyleScopedClasses['admin-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['admin-aside']} */ ;
+/** @type {__VLS_StyleScopedClasses['aside-logo']} */ ;
+/** @type {__VLS_StyleScopedClasses['aside-menu']} */ ;
+/** @type {__VLS_StyleScopedClasses['admin-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['header-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['header-user']} */ ;
+/** @type {__VLS_StyleScopedClasses['admin-main']} */ ;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
