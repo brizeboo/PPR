@@ -185,23 +185,30 @@ onUnmounted(() => {
         chartInstance.dispose();
     }
 });
-debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
-const __VLS_ctx = {};
+const __VLS_ctx = {
+    ...{},
+    ...{},
+    ...{},
+    ...{},
+};
 let __VLS_components;
+let __VLS_intrinsics;
 let __VLS_directives;
-// CSS variable injection 
-// CSS variable injection end 
-__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "ppr-report-viewer prv-container" },
 });
+/** @type {__VLS_StyleScopedClasses['ppr-report-viewer']} */ ;
+/** @type {__VLS_StyleScopedClasses['prv-container']} */ ;
 if (__VLS_ctx.meta?.params && __VLS_ctx.meta.params.length > 0) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+    __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
         ...{ class: "prv-query-form" },
     });
-    const __VLS_0 = {}.ElForm;
-    /** @type {[typeof __VLS_components.ElForm, typeof __VLS_components.elForm, typeof __VLS_components.ElForm, typeof __VLS_components.elForm, ]} */ ;
+    /** @type {__VLS_StyleScopedClasses['prv-query-form']} */ ;
+    let __VLS_0;
+    /** @ts-ignore @type {typeof __VLS_components.elForm | typeof __VLS_components.ElForm | typeof __VLS_components.elForm | typeof __VLS_components.ElForm} */
+    elForm;
     // @ts-ignore
-    const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
+    const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
         ...{ 'onSubmit': {} },
         inline: (true),
         model: (__VLS_ctx.queryParams),
@@ -211,18 +218,16 @@ if (__VLS_ctx.meta?.params && __VLS_ctx.meta.params.length > 0) {
         inline: (true),
         model: (__VLS_ctx.queryParams),
     }, ...__VLS_functionalComponentArgsRest(__VLS_1));
-    let __VLS_4;
     let __VLS_5;
-    let __VLS_6;
-    const __VLS_7 = {
-        onSubmit: (__VLS_ctx.fetchData)
-    };
-    __VLS_3.slots.default;
-    for (const [p] of __VLS_getVForSourceType((__VLS_ctx.meta.params))) {
-        const __VLS_8 = {}.ElFormItem;
-        /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
+    const __VLS_6 = ({ submit: {} },
+        { onSubmit: (__VLS_ctx.fetchData) });
+    const { default: __VLS_7 } = __VLS_3.slots;
+    for (const [p] of __VLS_vFor((__VLS_ctx.meta.params))) {
+        let __VLS_8;
+        /** @ts-ignore @type {typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem | typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem} */
+        elFormItem;
         // @ts-ignore
-        const __VLS_9 = __VLS_asFunctionalComponent(__VLS_8, new __VLS_8({
+        const __VLS_9 = __VLS_asFunctionalComponent1(__VLS_8, new __VLS_8({
             key: (p.paramName),
             label: (p.paramName),
         }));
@@ -230,74 +235,89 @@ if (__VLS_ctx.meta?.params && __VLS_ctx.meta.params.length > 0) {
             key: (p.paramName),
             label: (p.paramName),
         }, ...__VLS_functionalComponentArgsRest(__VLS_9));
-        __VLS_11.slots.default;
-        const __VLS_12 = {}.ElInput;
-        /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
+        const { default: __VLS_13 } = __VLS_11.slots;
+        let __VLS_14;
+        /** @ts-ignore @type {typeof __VLS_components.elInput | typeof __VLS_components.ElInput} */
+        elInput;
         // @ts-ignore
-        const __VLS_13 = __VLS_asFunctionalComponent(__VLS_12, new __VLS_12({
+        const __VLS_15 = __VLS_asFunctionalComponent1(__VLS_14, new __VLS_14({
             modelValue: (__VLS_ctx.queryParams[p.paramName]),
             placeholder: (p.paramType),
             clearable: true,
         }));
-        const __VLS_14 = __VLS_13({
+        const __VLS_16 = __VLS_15({
             modelValue: (__VLS_ctx.queryParams[p.paramName]),
             placeholder: (p.paramType),
             clearable: true,
-        }, ...__VLS_functionalComponentArgsRest(__VLS_13));
+        }, ...__VLS_functionalComponentArgsRest(__VLS_15));
+        // @ts-ignore
+        [meta, meta, meta, queryParams, queryParams, fetchData,];
         var __VLS_11;
+        // @ts-ignore
+        [];
     }
-    const __VLS_16 = {}.ElFormItem;
-    /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
+    let __VLS_19;
+    /** @ts-ignore @type {typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem | typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem} */
+    elFormItem;
     // @ts-ignore
-    const __VLS_17 = __VLS_asFunctionalComponent(__VLS_16, new __VLS_16({}));
-    const __VLS_18 = __VLS_17({}, ...__VLS_functionalComponentArgsRest(__VLS_17));
-    __VLS_19.slots.default;
-    const __VLS_20 = {}.ElButton;
-    /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
+    const __VLS_20 = __VLS_asFunctionalComponent1(__VLS_19, new __VLS_19({}));
+    const __VLS_21 = __VLS_20({}, ...__VLS_functionalComponentArgsRest(__VLS_20));
+    const { default: __VLS_24 } = __VLS_22.slots;
+    let __VLS_25;
+    /** @ts-ignore @type {typeof __VLS_components.elButton | typeof __VLS_components.ElButton | typeof __VLS_components.elButton | typeof __VLS_components.ElButton} */
+    elButton;
     // @ts-ignore
-    const __VLS_21 = __VLS_asFunctionalComponent(__VLS_20, new __VLS_20({
+    const __VLS_26 = __VLS_asFunctionalComponent1(__VLS_25, new __VLS_25({
         ...{ 'onClick': {} },
         type: "primary",
     }));
-    const __VLS_22 = __VLS_21({
+    const __VLS_27 = __VLS_26({
         ...{ 'onClick': {} },
         type: "primary",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_21));
-    let __VLS_24;
-    let __VLS_25;
-    let __VLS_26;
-    const __VLS_27 = {
-        onClick: (__VLS_ctx.fetchData)
-    };
-    __VLS_23.slots.default;
-    var __VLS_23;
-    var __VLS_19;
+    }, ...__VLS_functionalComponentArgsRest(__VLS_26));
+    let __VLS_30;
+    const __VLS_31 = ({ click: {} },
+        { onClick: (__VLS_ctx.fetchData) });
+    const { default: __VLS_32 } = __VLS_28.slots;
+    // @ts-ignore
+    [fetchData,];
+    var __VLS_28;
+    var __VLS_29;
+    // @ts-ignore
+    [];
+    var __VLS_22;
+    // @ts-ignore
+    [];
     var __VLS_3;
+    var __VLS_4;
 }
-__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "prv-content" },
 });
-__VLS_asFunctionalDirective(__VLS_directives.vLoading)(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.loading) }, null, null);
+__VLS_asFunctionalDirective(__VLS_directives.vLoading, {})(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.loading) }, null, null);
+/** @type {__VLS_StyleScopedClasses['prv-content']} */ ;
 if (__VLS_ctx.meta?.chartType === 'Table') {
-    const __VLS_28 = {}.ElTable;
-    /** @type {[typeof __VLS_components.ElTable, typeof __VLS_components.elTable, typeof __VLS_components.ElTable, typeof __VLS_components.elTable, ]} */ ;
+    let __VLS_33;
+    /** @ts-ignore @type {typeof __VLS_components.elTable | typeof __VLS_components.ElTable | typeof __VLS_components.elTable | typeof __VLS_components.ElTable} */
+    elTable;
     // @ts-ignore
-    const __VLS_29 = __VLS_asFunctionalComponent(__VLS_28, new __VLS_28({
+    const __VLS_34 = __VLS_asFunctionalComponent1(__VLS_33, new __VLS_33({
         data: (__VLS_ctx.tableData.rows),
         border: true,
         height: "100%",
     }));
-    const __VLS_30 = __VLS_29({
+    const __VLS_35 = __VLS_34({
         data: (__VLS_ctx.tableData.rows),
         border: true,
         height: "100%",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_29));
-    __VLS_31.slots.default;
-    for (const [col] of __VLS_getVForSourceType((__VLS_ctx.tableColumns))) {
-        const __VLS_32 = {}.ElTableColumn;
-        /** @type {[typeof __VLS_components.ElTableColumn, typeof __VLS_components.elTableColumn, ]} */ ;
+    }, ...__VLS_functionalComponentArgsRest(__VLS_34));
+    const { default: __VLS_38 } = __VLS_36.slots;
+    for (const [col] of __VLS_vFor((__VLS_ctx.tableColumns))) {
+        let __VLS_39;
+        /** @ts-ignore @type {typeof __VLS_components.elTableColumn | typeof __VLS_components.ElTableColumn} */
+        elTableColumn;
         // @ts-ignore
-        const __VLS_33 = __VLS_asFunctionalComponent(__VLS_32, new __VLS_32({
+        const __VLS_40 = __VLS_asFunctionalComponent1(__VLS_39, new __VLS_39({
             key: (col.prop),
             prop: (col.prop),
             label: (col.label),
@@ -305,79 +325,60 @@ if (__VLS_ctx.meta?.chartType === 'Table') {
             align: (col.align),
             showOverflowTooltip: true,
         }));
-        const __VLS_34 = __VLS_33({
+        const __VLS_41 = __VLS_40({
             key: (col.prop),
             prop: (col.prop),
             label: (col.label),
             width: (col.width),
             align: (col.align),
             showOverflowTooltip: true,
-        }, ...__VLS_functionalComponentArgsRest(__VLS_33));
+        }, ...__VLS_functionalComponentArgsRest(__VLS_40));
+        // @ts-ignore
+        [meta, vLoading, loading, tableData, tableColumns,];
     }
-    var __VLS_31;
+    // @ts-ignore
+    [];
+    var __VLS_36;
 }
 else if (__VLS_ctx.meta?.chartType === 'EChart') {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+    __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
         ref: "echartRef",
         ...{ class: "prv-echart" },
     });
-    /** @type {typeof __VLS_ctx.echartRef} */ ;
+    /** @type {__VLS_StyleScopedClasses['prv-echart']} */ ;
 }
 else if (__VLS_ctx.meta?.chartType === 'Excel') {
-    /** @type {[typeof ExcelEditor, ]} */ ;
+    const __VLS_44 = ExcelEditor;
     // @ts-ignore
-    const __VLS_36 = __VLS_asFunctionalComponent(ExcelEditor, new ExcelEditor({
+    const __VLS_45 = __VLS_asFunctionalComponent1(__VLS_44, new __VLS_44({
         ref: "excelViewerRef",
         readonly: true,
     }));
-    const __VLS_37 = __VLS_36({
+    const __VLS_46 = __VLS_45({
         ref: "excelViewerRef",
         readonly: true,
-    }, ...__VLS_functionalComponentArgsRest(__VLS_36));
-    /** @type {typeof __VLS_ctx.excelViewerRef} */ ;
-    var __VLS_39 = {};
-    var __VLS_38;
+    }, ...__VLS_functionalComponentArgsRest(__VLS_45));
+    var __VLS_49 = {};
+    var __VLS_47;
 }
 else {
-    const __VLS_41 = {}.ElEmpty;
-    /** @type {[typeof __VLS_components.ElEmpty, typeof __VLS_components.elEmpty, ]} */ ;
+    let __VLS_51;
+    /** @ts-ignore @type {typeof __VLS_components.elEmpty | typeof __VLS_components.ElEmpty} */
+    elEmpty;
     // @ts-ignore
-    const __VLS_42 = __VLS_asFunctionalComponent(__VLS_41, new __VLS_41({
+    const __VLS_52 = __VLS_asFunctionalComponent1(__VLS_51, new __VLS_51({
         description: "未知的图表类型",
     }));
-    const __VLS_43 = __VLS_42({
+    const __VLS_53 = __VLS_52({
         description: "未知的图表类型",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_42));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_52));
 }
-/** @type {__VLS_StyleScopedClasses['ppr-report-viewer']} */ ;
-/** @type {__VLS_StyleScopedClasses['prv-container']} */ ;
-/** @type {__VLS_StyleScopedClasses['prv-query-form']} */ ;
-/** @type {__VLS_StyleScopedClasses['prv-content']} */ ;
-/** @type {__VLS_StyleScopedClasses['prv-echart']} */ ;
 // @ts-ignore
-var __VLS_40 = __VLS_39;
-var __VLS_dollars;
-const __VLS_self = (await import('vue')).defineComponent({
-    setup() {
-        return {
-            ExcelEditor: ExcelEditor,
-            loading: loading,
-            meta: meta,
-            queryParams: queryParams,
-            tableData: tableData,
-            tableColumns: tableColumns,
-            echartRef: echartRef,
-            excelViewerRef: excelViewerRef,
-            fetchData: fetchData,
-        };
-    },
+var __VLS_50 = __VLS_49;
+// @ts-ignore
+[meta, meta,];
+const __VLS_export = (await import('vue')).defineComponent({
     __typeProps: {},
 });
-export default (await import('vue')).defineComponent({
-    setup() {
-        return {};
-    },
-    __typeProps: {},
-});
-; /* PartiallyEnd: #4569/main.vue */
+export default {};
 //# sourceMappingURL=PprReportViewer.vue.js.map

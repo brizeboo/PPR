@@ -86,7 +86,6 @@ import { ref, computed, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import Codemirror from 'vue-codemirror6'
 import { json } from '@codemirror/lang-json'
-import { oneDark } from '@codemirror/theme-one-dark'
 
 import { listReports, saveReport, getReportMeta, type Report } from '@/api/report'
 import { listViews, type View } from '@/api/view'
@@ -94,7 +93,7 @@ import PprReportViewer from '@/components/PprReportViewer.vue'
 import { http } from '@/api/http'
 
 // CodeMirror JSON扩展
-const jsonExtensions = [json(), oneDark]
+const jsonExtensions = [json()]
 
 // 报表列表
 const reports = ref<Report[]>([])

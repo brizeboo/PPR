@@ -1,5 +1,9 @@
 # PPR (Perfect Panel Report)
 
+<p align="center">
+  <img src="docs/assets/hero.png" alt="PPR Hero Image" width="100%" />
+</p>
+
 PPR is a complex reporting platform that supports dynamic data sources, drag-and-drop Excel template design, and data visualization.
 
 ## 🚀 Core Features

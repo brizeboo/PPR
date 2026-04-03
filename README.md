@@ -1,5 +1,9 @@
 # PPR (Perfect Panel Report)
 
+<p align="center">
+  <img src="docs/assets/hero.png" alt="PPR Hero Image" width="100%" />
+</p>
+
 PPR 是一个支持动态数据源、拖拽式 Excel 模板设计与数据可视化的复杂报表平台。
 
 ## 🚀 核心特性

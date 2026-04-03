@@ -112,36 +112,24 @@ function stox(wb) {
     }
     return out;
 }
-debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
-const __VLS_ctx = {};
+const __VLS_ctx = {
+    ...{},
+    ...{},
+    ...{},
+    ...{},
+};
 let __VLS_components;
+let __VLS_intrinsics;
 let __VLS_directives;
-// CSS variable injection 
-// CSS variable injection end 
-__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "excel-editor" },
     ref: "editorContainer",
 });
-/** @type {typeof __VLS_ctx.editorContainer} */ ;
 /** @type {__VLS_StyleScopedClasses['excel-editor']} */ ;
-var __VLS_dollars;
-const __VLS_self = (await import('vue')).defineComponent({
-    setup() {
-        return {
-            editorContainer: editorContainer,
-        };
-    },
+const __VLS_export = (await import('vue')).defineComponent({
+    setup: () => (__VLS_exposed),
     __typeEmits: {},
     __typeProps: {},
 });
-export default (await import('vue')).defineComponent({
-    setup() {
-        return {
-            ...__VLS_exposed,
-        };
-    },
-    __typeEmits: {},
-    __typeProps: {},
-});
-; /* PartiallyEnd: #4569/main.vue */
+export default {};
 //# sourceMappingURL=index.vue.js.map

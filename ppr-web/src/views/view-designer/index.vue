@@ -94,7 +94,6 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import Codemirror from 'vue-codemirror6'
 import { sql } from '@codemirror/lang-sql'
-import { oneDark } from '@codemirror/theme-one-dark'
 
 import { listDatasources, type Datasource } from '@/api/datasource'
 import { getView, listViews, previewView, saveView, type View, type ViewExecutionResult, type ViewParam } from '@/api/view'
@@ -129,7 +128,7 @@ const preview = reactive<ViewExecutionResult>({
 })
 
 // CodeMirror 编辑器扩展
-const editorExtensions = [sql(), oneDark]
+const editorExtensions = [sql()]
 
 // 过滤后的视图列表
 const filteredViews = computed(() => {
