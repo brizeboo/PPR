@@ -38,6 +38,11 @@
               <el-radio label="Excel">Excel网格</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item v-if="form.chartType === 'Excel'" label="Excel模板">
+            <el-select v-model="form.templateId" placeholder="请选择模板" class="w-full">
+              <el-option v-for="t in templates" :key="t.id" :label="t.name" :value="t.id" />
+            </el-select>
+          </el-form-item>
           <el-form-item label="轮询间隔(秒)">
             <el-input-number v-model="form.pollingInterval" :min="0" :step="5" />
             <span class="ml-2 text-xs text-gray-400">0表示不轮询</span>
@@ -85,11 +90,13 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { listReports, saveReport, getReportMeta, type Report } from '@/api/report'
 import { listViews, type View } from '@/api/view'
 import PprReportViewer from '@/components/PprReportViewer.vue'
+import { http } from '@/api/http'
 
 const jsonExtensions = [json(), oneDark]
 
 const reports = ref<Report[]>([])
 const views = ref<View[]>([])
+const templates = ref<any[]>([])
 const keyword = ref('')
 const selectedReportId = ref('')
 
@@ -100,6 +107,7 @@ const form = reactive<Partial<Report>>({
   id: '',
   name: '',
   viewId: '',
+  templateId: '',
   chartType: 'Table',
   pollingInterval: 0,
   styleConfig: '[]',
@@ -113,9 +121,10 @@ const filteredReports = computed(() => {
 })
 
 async function reloadData() {
-  const [resReports, resViews] = await Promise.all([listReports(), listViews()])
+  const [resReports, resViews, resTemplates] = await Promise.all([listReports(), listViews(), http.get('/api/v1/admin/template/list')])
   reports.value = resReports.data
   views.value = resViews.data
+  templates.value = resTemplates.data
 }
 
 function newReport() {
@@ -123,6 +132,7 @@ function newReport() {
   form.id = ''
   form.name = '新建报表'
   form.viewId = views.value.length ? views.value[0].id : ''
+  form.templateId = ''
   form.chartType = 'Table'
   form.pollingInterval = 0
   form.styleConfig = '[\n  {\n    "prop": "name",\n    "label": "名称"\n  }\n]'
@@ -136,6 +146,7 @@ async function onSelectReport(id: string) {
   form.id = data.id
   form.name = data.name
   form.viewId = data.viewId
+  form.templateId = data.templateId || ''
   form.chartType = data.chartType
   form.pollingInterval = data.pollingInterval
   form.styleConfig = data.styleConfig || '[]'

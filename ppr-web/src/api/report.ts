@@ -3,13 +3,13 @@ import type { ViewParam } from './view'
 
 export interface Report {
   id: string
-  viewId: string
-  templateId?: string
   name: string
+  viewId: string
   chartType: string
   pollingInterval: number
-  styleConfig?: string
-  chartConfig?: string
+  styleConfig: string
+  chartConfig: string
+  templateId?: string
 }
 
 export interface ReportMetaResponse extends Report {

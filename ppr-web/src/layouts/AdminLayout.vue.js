@@ -10,6 +10,12 @@ const title = computed(() => {
         return '视图设计器';
     if (route.path.startsWith('/report-designer'))
         return '报表设计器';
+    if (route.path.startsWith('/template-designer'))
+        return '模板设计器';
+    if (route.path.startsWith('/schedule'))
+        return '定时发送';
+    if (route.path.startsWith('/log'))
+        return '系统日志';
     return 'PPR';
 });
 function onSelect(index) {
@@ -98,24 +104,57 @@ const __VLS_27 = __VLS_26({
 }, ...__VLS_functionalComponentArgsRest(__VLS_26));
 __VLS_28.slots.default;
 var __VLS_28;
-var __VLS_12;
-var __VLS_8;
-const __VLS_29 = {}.ElContainer;
-/** @type {[typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, ]} */ ;
+const __VLS_29 = {}.ElMenuItem;
+/** @type {[typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, ]} */ ;
 // @ts-ignore
-const __VLS_30 = __VLS_asFunctionalComponent(__VLS_29, new __VLS_29({}));
-const __VLS_31 = __VLS_30({}, ...__VLS_functionalComponentArgsRest(__VLS_30));
+const __VLS_30 = __VLS_asFunctionalComponent(__VLS_29, new __VLS_29({
+    index: "/template-designer",
+}));
+const __VLS_31 = __VLS_30({
+    index: "/template-designer",
+}, ...__VLS_functionalComponentArgsRest(__VLS_30));
 __VLS_32.slots.default;
-const __VLS_33 = {}.ElHeader;
-/** @type {[typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, ]} */ ;
+var __VLS_32;
+const __VLS_33 = {}.ElMenuItem;
+/** @type {[typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, ]} */ ;
 // @ts-ignore
 const __VLS_34 = __VLS_asFunctionalComponent(__VLS_33, new __VLS_33({
-    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+    index: "/schedule",
 }));
 const __VLS_35 = __VLS_34({
-    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+    index: "/schedule",
 }, ...__VLS_functionalComponentArgsRest(__VLS_34));
 __VLS_36.slots.default;
+var __VLS_36;
+const __VLS_37 = {}.ElMenuItem;
+/** @type {[typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, typeof __VLS_components.ElMenuItem, typeof __VLS_components.elMenuItem, ]} */ ;
+// @ts-ignore
+const __VLS_38 = __VLS_asFunctionalComponent(__VLS_37, new __VLS_37({
+    index: "/log",
+}));
+const __VLS_39 = __VLS_38({
+    index: "/log",
+}, ...__VLS_functionalComponentArgsRest(__VLS_38));
+__VLS_40.slots.default;
+var __VLS_40;
+var __VLS_12;
+var __VLS_8;
+const __VLS_41 = {}.ElContainer;
+/** @type {[typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, typeof __VLS_components.ElContainer, typeof __VLS_components.elContainer, ]} */ ;
+// @ts-ignore
+const __VLS_42 = __VLS_asFunctionalComponent(__VLS_41, new __VLS_41({}));
+const __VLS_43 = __VLS_42({}, ...__VLS_functionalComponentArgsRest(__VLS_42));
+__VLS_44.slots.default;
+const __VLS_45 = {}.ElHeader;
+/** @type {[typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, typeof __VLS_components.ElHeader, typeof __VLS_components.elHeader, ]} */ ;
+// @ts-ignore
+const __VLS_46 = __VLS_asFunctionalComponent(__VLS_45, new __VLS_45({
+    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+}));
+const __VLS_47 = __VLS_46({
+    ...{ class: "h-14 flex items-center justify-between border-b border-solid border-gray-200" },
+}, ...__VLS_functionalComponentArgsRest(__VLS_46));
+__VLS_48.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "px-4 font-500" },
 });
@@ -123,24 +162,24 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "px-4 text-sm text-gray-500" },
 });
-var __VLS_36;
-const __VLS_37 = {}.ElMain;
+var __VLS_48;
+const __VLS_49 = {}.ElMain;
 /** @type {[typeof __VLS_components.ElMain, typeof __VLS_components.elMain, typeof __VLS_components.ElMain, typeof __VLS_components.elMain, ]} */ ;
 // @ts-ignore
-const __VLS_38 = __VLS_asFunctionalComponent(__VLS_37, new __VLS_37({
+const __VLS_50 = __VLS_asFunctionalComponent(__VLS_49, new __VLS_49({
     ...{ class: "p-4 overflow-auto" },
 }));
-const __VLS_39 = __VLS_38({
+const __VLS_51 = __VLS_50({
     ...{ class: "p-4 overflow-auto" },
-}, ...__VLS_functionalComponentArgsRest(__VLS_38));
-__VLS_40.slots.default;
-const __VLS_41 = {}.RouterView;
+}, ...__VLS_functionalComponentArgsRest(__VLS_50));
+__VLS_52.slots.default;
+const __VLS_53 = {}.RouterView;
 /** @type {[typeof __VLS_components.RouterView, ]} */ ;
 // @ts-ignore
-const __VLS_42 = __VLS_asFunctionalComponent(__VLS_41, new __VLS_41({}));
-const __VLS_43 = __VLS_42({}, ...__VLS_functionalComponentArgsRest(__VLS_42));
-var __VLS_40;
-var __VLS_32;
+const __VLS_54 = __VLS_asFunctionalComponent(__VLS_53, new __VLS_53({}));
+const __VLS_55 = __VLS_54({}, ...__VLS_functionalComponentArgsRest(__VLS_54));
+var __VLS_52;
+var __VLS_44;
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['h-screen']} */ ;
 /** @type {__VLS_StyleScopedClasses['border-r']} */ ;

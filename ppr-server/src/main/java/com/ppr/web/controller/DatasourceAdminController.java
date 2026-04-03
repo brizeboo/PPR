@@ -5,6 +5,7 @@ import com.ppr.infra.datasource.DataSourceService;
 import com.ppr.infra.meta.entity.PprDatasourceEntity;
 import com.ppr.infra.meta.mapper.PprDatasourceMapper;
 import com.ppr.web.dto.DatasourceTestRequest;
+import com.ppr.infra.log.LogAudit;
 import com.ppr.web.dto.DatasourceUpsertRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+/**
+ * 后台管理：数据源连接
+ */
 @RestController
 @RequestMapping("/api/v1/admin/datasource")
 public class DatasourceAdminController {
@@ -68,6 +71,7 @@ public class DatasourceAdminController {
         return resp;
     }
 
+    @LogAudit("测试数据源连接")
     @PostMapping("/test")
     public Map<String, Object> testConnection(@RequestBody @Valid DatasourceTestRequest req) {
         boolean ok = dataSourceService.testConnection(req.getJdbcUrl(), req.getUsername(), req.getPassword());

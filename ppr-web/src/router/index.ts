@@ -22,6 +22,21 @@ const routes: RouteRecordRaw[] = [
         name: 'ReportDesigner',
         component: () => import('@/views/report-designer/index.vue'),
       },
+      {
+        path: 'template-designer',
+        name: 'TemplateDesigner',
+        component: () => import('@/views/template-designer/index.vue'),
+      },
+      {
+        path: 'schedule',
+        name: 'Schedule',
+        component: () => import('@/views/schedule/index.vue'),
+      },
+      {
+        path: 'log',
+        name: 'Log',
+        component: () => import('@/views/log/index.vue'),
+      },
     ],
   },
 ]

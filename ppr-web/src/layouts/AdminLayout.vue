@@ -6,12 +6,15 @@
         <el-menu-item index="/datasource">数据源管理</el-menu-item>
         <el-menu-item index="/view-designer">视图设计器</el-menu-item>
         <el-menu-item index="/report-designer">报表设计器</el-menu-item>
+        <el-menu-item index="/template-designer">模板设计器</el-menu-item>
+        <el-menu-item index="/schedule">定时发送</el-menu-item>
+        <el-menu-item index="/log">系统日志</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
       <el-header class="h-14 flex items-center justify-between border-b border-solid border-gray-200">
         <div class="px-4 font-500">{{ title }}</div>
-        <div class="px-4 text-sm text-gray-500">M2</div>
+        <div class="px-4 text-sm text-gray-500">M3</div>
       </el-header>
       <el-main class="p-4 overflow-auto">
         <RouterView />
@@ -33,6 +36,9 @@ const title = computed(() => {
   if (route.path.startsWith('/datasource')) return '数据源管理'
   if (route.path.startsWith('/view-designer')) return '视图设计器'
   if (route.path.startsWith('/report-designer')) return '报表设计器'
+  if (route.path.startsWith('/template-designer')) return '模板设计器'
+  if (route.path.startsWith('/schedule')) return '定时发送'
+  if (route.path.startsWith('/log')) return '系统日志'
   return 'PPR'
 })
 

@@ -41,3 +41,43 @@ CREATE TABLE IF NOT EXISTS PPR_PERMISSION (
     action TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS PPR_EXCEL_TEMPLATE (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    mapping_config TEXT
+);
+
+CREATE TABLE IF NOT EXISTS PPR_SCHEDULE_TASK (
+    id TEXT PRIMARY KEY,
+    report_id TEXT NOT NULL,
+    cron TEXT NOT NULL,
+    receivers TEXT,
+    cc_receivers TEXT,
+    email_subject TEXT,
+    email_content TEXT,
+    status INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS PPR_MAIL_CONFIG (
+    id TEXT PRIMARY KEY,
+    host TEXT NOT NULL,
+    port INTEGER NOT NULL,
+    username TEXT,
+    password TEXT,
+    protocol TEXT DEFAULT 'smtp'
+);
+
+CREATE TABLE IF NOT EXISTS PPR_LOG (
+    id TEXT PRIMARY KEY,
+    type TEXT NOT NULL,
+    operator TEXT,
+    ip TEXT,
+    method TEXT,
+    params TEXT,
+    time INTEGER NOT NULL,
+    cost_ms INTEGER,
+    error_msg TEXT
+);
+
+

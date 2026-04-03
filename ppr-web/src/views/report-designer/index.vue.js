@@ -6,9 +6,11 @@ import { oneDark } from '@codemirror/theme-one-dark';
 import { listReports, saveReport, getReportMeta } from '@/api/report';
 import { listViews } from '@/api/view';
 import PprReportViewer from '@/components/PprReportViewer.vue';
+import { http } from '@/api/http';
 const jsonExtensions = [json(), oneDark];
 const reports = ref([]);
 const views = ref([]);
+const templates = ref([]);
 const keyword = ref('');
 const selectedReportId = ref('');
 const previewId = ref('');
@@ -17,6 +19,7 @@ const form = reactive({
     id: '',
     name: '',
     viewId: '',
+    templateId: '',
     chartType: 'Table',
     pollingInterval: 0,
     styleConfig: '[]',
@@ -29,15 +32,17 @@ const filteredReports = computed(() => {
     return reports.value.filter((r) => r.name.toLowerCase().includes(k) || r.id.toLowerCase().includes(k));
 });
 async function reloadData() {
-    const [resReports, resViews] = await Promise.all([listReports(), listViews()]);
+    const [resReports, resViews, resTemplates] = await Promise.all([listReports(), listViews(), http.get('/api/v1/admin/template/list')]);
     reports.value = resReports.data;
     views.value = resViews.data;
+    templates.value = resTemplates.data;
 }
 function newReport() {
     selectedReportId.value = '';
     form.id = '';
     form.name = '新建报表';
     form.viewId = views.value.length ? views.value[0].id : '';
+    form.templateId = '';
     form.chartType = 'Table';
     form.pollingInterval = 0;
     form.styleConfig = '[\n  {\n    "prop": "name",\n    "label": "名称"\n  }\n]';
@@ -50,6 +55,7 @@ async function onSelectReport(id) {
     form.id = data.id;
     form.name = data.name;
     form.viewId = data.viewId;
+    form.templateId = data.templateId || '';
     form.chartType = data.chartType;
     form.pollingInterval = data.pollingInterval;
     form.styleConfig = data.styleConfig || '[]';
@@ -348,33 +354,76 @@ __VLS_75.slots.default;
 var __VLS_75;
 var __VLS_63;
 var __VLS_59;
-const __VLS_76 = {}.ElFormItem;
+if (__VLS_ctx.form.chartType === 'Excel') {
+    const __VLS_76 = {}.ElFormItem;
+    /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
+    // @ts-ignore
+    const __VLS_77 = __VLS_asFunctionalComponent(__VLS_76, new __VLS_76({
+        label: "Excel模板",
+    }));
+    const __VLS_78 = __VLS_77({
+        label: "Excel模板",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_77));
+    __VLS_79.slots.default;
+    const __VLS_80 = {}.ElSelect;
+    /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
+    // @ts-ignore
+    const __VLS_81 = __VLS_asFunctionalComponent(__VLS_80, new __VLS_80({
+        modelValue: (__VLS_ctx.form.templateId),
+        placeholder: "请选择模板",
+        ...{ class: "w-full" },
+    }));
+    const __VLS_82 = __VLS_81({
+        modelValue: (__VLS_ctx.form.templateId),
+        placeholder: "请选择模板",
+        ...{ class: "w-full" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_81));
+    __VLS_83.slots.default;
+    for (const [t] of __VLS_getVForSourceType((__VLS_ctx.templates))) {
+        const __VLS_84 = {}.ElOption;
+        /** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+        // @ts-ignore
+        const __VLS_85 = __VLS_asFunctionalComponent(__VLS_84, new __VLS_84({
+            key: (t.id),
+            label: (t.name),
+            value: (t.id),
+        }));
+        const __VLS_86 = __VLS_85({
+            key: (t.id),
+            label: (t.name),
+            value: (t.id),
+        }, ...__VLS_functionalComponentArgsRest(__VLS_85));
+    }
+    var __VLS_83;
+    var __VLS_79;
+}
+const __VLS_88 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
-const __VLS_77 = __VLS_asFunctionalComponent(__VLS_76, new __VLS_76({
+const __VLS_89 = __VLS_asFunctionalComponent(__VLS_88, new __VLS_88({
     label: "轮询间隔(秒)",
 }));
-const __VLS_78 = __VLS_77({
+const __VLS_90 = __VLS_89({
     label: "轮询间隔(秒)",
-}, ...__VLS_functionalComponentArgsRest(__VLS_77));
-__VLS_79.slots.default;
-const __VLS_80 = {}.ElInputNumber;
+}, ...__VLS_functionalComponentArgsRest(__VLS_89));
+__VLS_91.slots.default;
+const __VLS_92 = {}.ElInputNumber;
 /** @type {[typeof __VLS_components.ElInputNumber, typeof __VLS_components.elInputNumber, ]} */ ;
 // @ts-ignore
-const __VLS_81 = __VLS_asFunctionalComponent(__VLS_80, new __VLS_80({
+const __VLS_93 = __VLS_asFunctionalComponent(__VLS_92, new __VLS_92({
     modelValue: (__VLS_ctx.form.pollingInterval),
     min: (0),
     step: (5),
 }));
-const __VLS_82 = __VLS_81({
+const __VLS_94 = __VLS_93({
     modelValue: (__VLS_ctx.form.pollingInterval),
     min: (0),
     step: (5),
-}, ...__VLS_functionalComponentArgsRest(__VLS_81));
+}, ...__VLS_functionalComponentArgsRest(__VLS_93));
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
     ...{ class: "ml-2 text-xs text-gray-400" },
 });
-var __VLS_79;
+var __VLS_91;
 var __VLS_39;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "border border-solid border-gray-200 rounded p-3 flex-1 overflow-auto bg-white flex flex-col" },
@@ -389,19 +438,19 @@ if (__VLS_ctx.form.chartType === 'Table') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "text-xs text-gray-500 mb-2" },
     });
-    const __VLS_84 = {}.Codemirror;
+    const __VLS_96 = {}.Codemirror;
     /** @type {[typeof __VLS_components.Codemirror, ]} */ ;
     // @ts-ignore
-    const __VLS_85 = __VLS_asFunctionalComponent(__VLS_84, new __VLS_84({
+    const __VLS_97 = __VLS_asFunctionalComponent(__VLS_96, new __VLS_96({
         modelValue: (__VLS_ctx.form.styleConfig),
         extensions: (__VLS_ctx.jsonExtensions),
         ...{ style: ({ height: '100%' }) },
     }));
-    const __VLS_86 = __VLS_85({
+    const __VLS_98 = __VLS_97({
         modelValue: (__VLS_ctx.form.styleConfig),
         extensions: (__VLS_ctx.jsonExtensions),
         ...{ style: ({ height: '100%' }) },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_85));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_97));
 }
 if (__VLS_ctx.form.chartType === 'EChart') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -410,19 +459,19 @@ if (__VLS_ctx.form.chartType === 'EChart') {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "text-xs text-gray-500 mb-2" },
     });
-    const __VLS_88 = {}.Codemirror;
+    const __VLS_100 = {}.Codemirror;
     /** @type {[typeof __VLS_components.Codemirror, ]} */ ;
     // @ts-ignore
-    const __VLS_89 = __VLS_asFunctionalComponent(__VLS_88, new __VLS_88({
+    const __VLS_101 = __VLS_asFunctionalComponent(__VLS_100, new __VLS_100({
         modelValue: (__VLS_ctx.form.chartConfig),
         extensions: (__VLS_ctx.jsonExtensions),
         ...{ style: ({ height: '100%' }) },
     }));
-    const __VLS_90 = __VLS_89({
+    const __VLS_102 = __VLS_101({
         modelValue: (__VLS_ctx.form.chartConfig),
         extensions: (__VLS_ctx.jsonExtensions),
         ...{ style: ({ height: '100%' }) },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_89));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_101));
 }
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "col-span-5 border border-solid border-gray-200 rounded p-3 overflow-auto bg-gray-50 relative" },
@@ -433,52 +482,52 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "font-600" },
 });
-const __VLS_92 = {}.ElButton;
+const __VLS_104 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
-const __VLS_93 = __VLS_asFunctionalComponent(__VLS_92, new __VLS_92({
+const __VLS_105 = __VLS_asFunctionalComponent(__VLS_104, new __VLS_104({
     ...{ 'onClick': {} },
     size: "small",
     disabled: (!__VLS_ctx.form.id),
 }));
-const __VLS_94 = __VLS_93({
+const __VLS_106 = __VLS_105({
     ...{ 'onClick': {} },
     size: "small",
     disabled: (!__VLS_ctx.form.id),
-}, ...__VLS_functionalComponentArgsRest(__VLS_93));
-let __VLS_96;
-let __VLS_97;
-let __VLS_98;
-const __VLS_99 = {
+}, ...__VLS_functionalComponentArgsRest(__VLS_105));
+let __VLS_108;
+let __VLS_109;
+let __VLS_110;
+const __VLS_111 = {
     onClick: (__VLS_ctx.previewReport)
 };
-__VLS_95.slots.default;
-var __VLS_95;
+__VLS_107.slots.default;
+var __VLS_107;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "h-[calc(100%-40px)] w-full bg-white relative" },
 });
 if (__VLS_ctx.previewId) {
     /** @type {[typeof PprReportViewer, ]} */ ;
     // @ts-ignore
-    const __VLS_100 = __VLS_asFunctionalComponent(PprReportViewer, new PprReportViewer({
+    const __VLS_112 = __VLS_asFunctionalComponent(PprReportViewer, new PprReportViewer({
         reportId: (__VLS_ctx.previewId),
         key: (__VLS_ctx.previewKey),
     }));
-    const __VLS_101 = __VLS_100({
+    const __VLS_113 = __VLS_112({
         reportId: (__VLS_ctx.previewId),
         key: (__VLS_ctx.previewKey),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_100));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_112));
 }
 else {
-    const __VLS_103 = {}.ElEmpty;
+    const __VLS_115 = {}.ElEmpty;
     /** @type {[typeof __VLS_components.ElEmpty, typeof __VLS_components.elEmpty, ]} */ ;
     // @ts-ignore
-    const __VLS_104 = __VLS_asFunctionalComponent(__VLS_103, new __VLS_103({
+    const __VLS_116 = __VLS_asFunctionalComponent(__VLS_115, new __VLS_115({
         description: "请先保存报表再预览",
     }));
-    const __VLS_105 = __VLS_104({
+    const __VLS_117 = __VLS_116({
         description: "请先保存报表再预览",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_104));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_116));
 }
 /** @type {__VLS_StyleScopedClasses['grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['grid-cols-12']} */ ;
@@ -521,6 +570,7 @@ else {
 /** @type {__VLS_StyleScopedClasses['mb-2']} */ ;
 /** @type {__VLS_StyleScopedClasses['flex-1']} */ ;
 /** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
+/** @type {__VLS_StyleScopedClasses['w-full']} */ ;
 /** @type {__VLS_StyleScopedClasses['w-full']} */ ;
 /** @type {__VLS_StyleScopedClasses['ml-2']} */ ;
 /** @type {__VLS_StyleScopedClasses['text-xs']} */ ;
@@ -571,6 +621,7 @@ const __VLS_self = (await import('vue')).defineComponent({
             PprReportViewer: PprReportViewer,
             jsonExtensions: jsonExtensions,
             views: views,
+            templates: templates,
             keyword: keyword,
             selectedReportId: selectedReportId,
             previewId: previewId,

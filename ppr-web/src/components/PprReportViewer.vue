@@ -31,6 +31,10 @@
       <template v-else-if="meta?.chartType === 'EChart'">
         <div ref="echartRef" class="w-full h-full"></div>
       </template>
+
+      <template v-else-if="meta?.chartType === 'Excel'">
+        <ExcelEditor ref="excelViewerRef" readonly />
+      </template>
       
       <template v-else>
         <el-empty description="未知的图表类型" />
@@ -44,6 +48,8 @@ import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
 import { getReportMeta, getReportData, type ReportMetaResponse } from '@/api/report'
+import ExcelEditor from '@/components/ExcelEditor/index.vue'
+import { http } from '@/api/http'
 
 const props = defineProps<{
   reportId: string
@@ -56,6 +62,7 @@ const tableData = ref<{ columns: string[]; rows: any[] }>({ columns: [], rows: [
 const tableColumns = ref<any[]>([])
 
 const echartRef = ref<HTMLElement | null>(null)
+const excelViewerRef = ref<InstanceType<typeof ExcelEditor> | null>(null)
 let chartInstance: echarts.ECharts | null = null
 let pollingTimer: number | null = null
 
@@ -112,14 +119,50 @@ async function fetchData() {
       if (chartInstance && meta.value.chartConfig) {
         try {
           const optStr = meta.value.chartConfig
-          // Inject data into options
-          // Extremely simple implementation: evaluate the JSON as JS to allow functions or just parse
-          // Normally we'd bind data safely. For PPR PRD: ECharts config can be injected with data
           const option = new Function('data', `return ${optStr}`)(data)
           chartInstance.setOption(option, true)
         } catch (e) {
           console.error('Failed to parse ECharts config', e)
           ElMessage.error('图表配置解析失败')
+        }
+      }
+    } else if (meta.value.chartType === 'Excel') {
+      if (excelViewerRef.value && meta.value.templateId) {
+        try {
+          // 1. Load mapping config
+          const tplRes = await http.get(`/api/v1/template/${meta.value.templateId}`)
+          const mappingConfigStr = tplRes.data.mappingConfig
+          const mappingConfig = mappingConfigStr ? JSON.parse(mappingConfigStr) : []
+
+          // 2. Load Excel File into ArrayBuffer and then into File object
+          const fileRes = await http.get(`/api/v1/template/file/${meta.value.templateId}`, { responseType: 'blob' })
+          const file = new File([fileRes.data], 'template.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          
+          await excelViewerRef.value.loadExcelFile(file)
+
+          // 3. Fill data based on mapping rules
+          await nextTick()
+          
+          mappingConfig.forEach((conf: any) => {
+             const val = data.rows && data.rows.length > 0 ? data.rows[0][conf.field] : ''
+             if (val !== undefined && excelViewerRef.value) {
+                if (conf.type === 'single') {
+                   excelViewerRef.value.setCellValue(conf.row, conf.col, String(val))
+                } else if (conf.type === 'row') {
+                   // Render lists
+                   data.rows.forEach((r: any, idx: number) => {
+                      excelViewerRef.value!.setCellValue(conf.row + idx, conf.col, String(r[conf.field] || ''))
+                   })
+                } else if (conf.type === 'col') {
+                   data.rows.forEach((r: any, idx: number) => {
+                      excelViewerRef.value!.setCellValue(conf.row, conf.col + idx, String(r[conf.field] || ''))
+                   })
+                }
+             }
+          })
+        } catch (e) {
+          console.error('Failed to load or render Excel template', e)
+          ElMessage.error('Excel 模板加载失败')
         }
       }
     }

@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import PprReportViewer from '@/components/PprReportViewer.vue';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-import 'virtual:uno.css';
 export function render(selector, options) {
     const container = typeof selector === 'string' ? document.querySelector(selector) : selector;
     if (!container) {
