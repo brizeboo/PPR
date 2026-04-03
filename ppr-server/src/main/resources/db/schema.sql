@@ -23,3 +23,21 @@ CREATE TABLE IF NOT EXISTS PPR_VIEW_PARAM (
     is_required INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS PPR_REPORT (
+    id TEXT PRIMARY KEY,
+    view_id TEXT NOT NULL,
+    template_id TEXT,
+    name TEXT NOT NULL,
+    chart_type TEXT NOT NULL,
+    polling_interval INTEGER NOT NULL DEFAULT 0,
+    style_config TEXT,
+    chart_config TEXT
+);
+
+CREATE TABLE IF NOT EXISTS PPR_PERMISSION (
+    id TEXT PRIMARY KEY,
+    report_id TEXT NOT NULL,
+    auth_char TEXT NOT NULL,
+    action TEXT NOT NULL
+);
+

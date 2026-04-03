@@ -2,9 +2,13 @@
 
 本阶段目标为跑通“数据源连接 -> 视图 SQL 执行 -> 简单报表数据返回”的基础全链路。为了适应 AI 编程模型的上下文窗口，任务已被细化为单次 PR 级别的颗粒度。
 
+## 阶段状态
+
+- [x] M1 全链路已完成（后端 + 前端 + 构建验证）
+
 ## 后端任务 (Backend)
 
-### Task B1.1: Spring Boot 工程初始化与 SQLite 集成
+### [x] Task B1.1: Spring Boot 工程初始化与 SQLite 集成
 * **执行步骤**: 
   1. 使用 Spring Initializr 创建 Java 17 + Spring Boot 3.x 工程。
   2. 配置 Maven 多模块（如 `ppr-core`, `ppr-server`），预留 Nacos 微服务依赖但不默认开启。
@@ -14,7 +18,7 @@
   * 启动应用后，能在本地目录自动生成 `ppr-meta.db` 文件。
   * 编写一个简单的单元测试，成功对 `PPR_DATASOURCE` 表进行 CRUD 操作。
 
-### Task B1.2: 动态数据源 (Dynamic DataSource) 集成
+### [x] Task B1.2: 动态数据源 (Dynamic DataSource) 集成
 * **执行步骤**:
   1. 引入 `dynamic-datasource-spring-boot-starter`。
   2. 开发 `DataSourceService`，实现基于 `PPR_DATASOURCE` 记录在运行时动态添加、删除外部数据源（MySQL/PG/SQLServer）。
@@ -22,7 +26,7 @@
 * **验收标准**: 
   * 通过 API 传入任意合法的 MySQL 连接信息，系统返回连接成功，且不影响主 SQLite 数据源的运行。
 
-### Task B1.3: SQL 安全解析器集成 (JSqlParser)
+### [x] Task B1.3: SQL 安全解析器集成 (JSqlParser)
 * **执行步骤**:
   1. 引入 `jsqlparser` 依赖。
   2. 编写 `SqlSecurityValidator` 工具类，解析 SQL 抽象语法树 (AST)。
@@ -31,7 +35,7 @@
 * **验收标准**: 
   * 编写单元测试：输入 `SELECT * FROM users` 返回通过；输入 `SELECT * FROM users; DROP TABLE users;` 抛出 `SqlSecurityException`。
 
-### Task B1.4: 动态视图查询引擎 (JdbcTemplate)
+### [x] Task B1.4: 动态视图查询引擎 (JdbcTemplate)
 * **执行步骤**:
   1. 编写 `ViewExecutionEngine`。
   2. 根据 `viewId` 查询 `PPR_VIEW` 及其 `PPR_VIEW_PARAM` 定义。
@@ -46,7 +50,7 @@
 
 ## 前端任务 (Frontend)
 
-### Task F1.1: Vue 3 基础工程与管理控制台骨架
+### [x] Task F1.1: Vue 3 基础工程与管理控制台骨架
 * **执行步骤**:
   1. 使用 Vite 初始化 Vue 3 + TypeScript 项目。
   2. 集成 Element Plus、Vue Router、Pinia 以及 UnoCSS。
@@ -55,7 +59,7 @@
   * 成功运行 `npm run dev`，无报错。
   * 页面呈现标准的后台布局，点击左侧菜单可平滑切换路由，UnoCSS 样式生效。
 
-### Task F1.2: 数据源管理页面 (CRUD & 测试连接)
+### [x] Task F1.2: 数据源管理页面 (CRUD & 测试连接)
 * **执行步骤**:
   1. 开发 `/views/datasource/index.vue`。
   2. 使用 `el-table` 展示数据源列表。
@@ -64,7 +68,7 @@
 * **验收标准**: 
   * 页面可正常展示数据，点击“测试连接”并能根据后端返回弹出成功/失败的 Message 提示。
 
-### Task F1.3: 视图设计器 - CodeMirror 6 集成
+### [x] Task F1.3: 视图设计器 - CodeMirror 6 集成
 * **执行步骤**:
   1. 引入 `vue-codemirror6` 及其核心依赖。
   2. 开发 `/views/view-designer/index.vue`，页面划分为左侧（视图列表）、中上（SQL 编辑区）、中下（参数配置区）、右侧（预览结果区）。
@@ -72,7 +76,7 @@
 * **验收标准**: 
   * 页面加载后，能在代码编辑器中输入 SQL 并看到明显的语法高亮，编辑器体验流畅，无性能卡顿。
 
-### Task F1.4: 视图设计器 - 参数绑定与实时预览
+### [x] Task F1.4: 视图设计器 - 参数绑定与实时预览
 * **执行步骤**:
   1. 在视图设计器中开发“参数配置表单”（动态增删行，包含参数名、类型、是否必填、字典映射等）。
   2. 开发“运行”按钮，提取 CodeMirror 中的 SQL 及配置好的参数，调用后端 `/api/v1/admin/view/preview` 接口。

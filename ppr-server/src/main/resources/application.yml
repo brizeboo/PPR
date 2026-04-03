@@ -21,3 +21,9 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 
+ppr:
+  auth:
+    enabled: false
+    host-url: http://localhost:8081/api/auth/check
+
+

@@ -17,6 +17,11 @@ const routes: RouteRecordRaw[] = [
         name: 'ViewDesigner',
         component: () => import('@/views/view-designer/index.vue'),
       },
+      {
+        path: 'report-designer',
+        name: 'ReportDesigner',
+        component: () => import('@/views/report-designer/index.vue'),
+      },
     ],
   },
 ]

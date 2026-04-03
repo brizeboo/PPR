@@ -2,8 +2,16 @@ package com.ppr.infra.jdbc;
 
 import com.baomidou.dynamic.datasource.toolkit.DynamicDataSourceContextHolder;
 import com.ppr.domain.enums.ParamType;
+import com.ppr.infra.auth.AuthContextHolder;
+import com.ppr.infra.auth.HostSystemAuthService;
 import com.ppr.infra.meta.entity.PprViewParamEntity;
 import com.ppr.infra.sql.SqlSecurityValidator;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.expression.Expression;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -75,6 +83,8 @@ public class ViewExecutionEngine {
         }
 
         String executableSql = toNamedParameterSql(sqlContent, defMap);
+        executableSql = appendDataScope(executableSql);
+
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(convertedParams);
 
         DynamicDataSourceContextHolder.push(datasourceId);
@@ -102,6 +112,34 @@ public class ViewExecutionEngine {
         } finally {
             DynamicDataSourceContextHolder.poll();
         }
+    }
+
+    private String appendDataScope(String sql) {
+        HostSystemAuthService.AuthResult authResult = AuthContextHolder.getAuthResult();
+        if (authResult == null || authResult.getDataScope() == null || authResult.getDataScope().isBlank()) {
+            return sql;
+        }
+
+        try {
+            Statement stmt = CCJSqlParserUtil.parse(sql);
+            if (stmt instanceof Select) {
+                Select select = (Select) stmt;
+                if (select.getSelectBody() instanceof PlainSelect) {
+                    PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+                    Expression dataScopeExpr = CCJSqlParserUtil.parseCondExpression(authResult.getDataScope());
+                    if (plainSelect.getWhere() == null) {
+                        plainSelect.setWhere(dataScopeExpr);
+                    } else {
+                        Expression combined = CCJSqlParserUtil.parseCondExpression("(" + plainSelect.getWhere().toString() + ") AND (" + authResult.getDataScope() + ")");
+                        plainSelect.setWhere(combined);
+                    }
+                    return select.toString();
+                }
+            }
+        } catch (JSQLParserException e) {
+            throw new RuntimeException("Failed to append DataScope to SQL", e);
+        }
+        return sql;
     }
 
     private static String toNamedParameterSql(String sqlContent, Map<String, PprViewParamEntity> defMap) {

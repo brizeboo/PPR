@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PPR Embed Demo</title>
+  <!-- Optional: we might need the CSS generated from build:lib, normally we inline css for embedded JS -->
+  <link rel="stylesheet" href="../dist/style.css" />
+</head>
+<body>
+  <h1>PPR Embed Report Demo</h1>
+  <div id="ppr-container" style="width: 800px; height: 600px; border: 1px solid #ccc;"></div>
+
+  <script src="../dist/ppr-renderer.umd.cjs"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.PPR && window.PPR.render) {
+        window.PPR.render('#ppr-container', {
+          reportId: 'test-report-id', // Replace with a real report ID
+          onLoad: () => {
+            console.log('Report loaded!')
+          }
+        });
+      } else {
+        console.error('PPR not found on window object')
+      }
+    });
+  </script>
+</body>
+</html>
