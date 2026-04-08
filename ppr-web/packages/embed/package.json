@@ -1,0 +1,20 @@
+{
+  "name": "@ppr/embed",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/embed/entry.ts",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.5.10",
+    "element-plus": "^2.8.4",
+    "@ppr/core": "workspace:*",
+    "@ppr/components": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "vite": "^8.0.3"
+  }
+}

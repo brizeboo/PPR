@@ -1,0 +1,9 @@
+{
+  "name": "@ppr/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "axios": "^1.7.7"
+  }
+}

@@ -384,33 +384,33 @@ ppr-server/
 
 ### 9.3 前端目录结构（ppr-web）
 
-为同时满足三种交付形态：**独立管理控制台**、**原生 JS 单文件挂载**、**NPM 包（Vue/React）**，建议采用 workspace 方式组织多个 package（也可在项目初期先落成单体，后续再拆分）。
+为同时满足三种交付形态：**独立管理控制台**、**原生 JS 单文件挂载**、**NPM 包（Vue/React）**，前端项目已采用 **pnpm workspace 多包（Monorepo）** 结构进行组织。
 
 ```text
 ppr-web/
 ├─ package.json
-├─ vite.config.ts
-├─ uno.config.ts
+├─ pnpm-workspace.yaml             # pnpm 工作区配置文件
 ├─ packages/
-│  ├─ core/                      # 通用核心（请求层、类型、工具、字典翻译）
-│  │  ├─ src/api/                # /api/v1/* 封装
-│  │  ├─ src/types/              # View/Report/Template 等 TS 类型
-│  │  └─ src/utils/
-│  ├─ embed/                     # 原生 JS 产物：暴露全局 PPR.render
-│  │  └─ src/
-│  │     ├─ entry.ts             # IIFE/UMD 入口（根据构建策略）
-│  │     └─ render/              # mount/unmount、拦截器注入
-│  ├─ admin/                     # 独立管理控制台（4.1~4.9）
-│  │  └─ src/
-│  │     ├─ pages/               # 各业务页面
-│  │     ├─ router/              # 动态路由与菜单
-│  │     ├─ store/               # Pinia
-│  │     └─ components/
-│  ├─ vue/                       # @ppr/vue 组件封装（可选）
-│  │  └─ src/
-│  └─ react/                     # @ppr/react 组件封装（可选）
-│     └─ src/
-└─ public/                       # 静态资源（可选）
+│  ├─ core/                        # 通用核心包（@ppr/core）
+│  │  ├─ src/api/                  # 请求层及 /api/v1/* 封装
+│  │  ├─ src/types/                # 全局 TS 类型定义
+│  │  └─ src/index.ts              # 统一导出入口
+│  ├─ components/                  # 数据展示核心组件库（@ppr/components）
+│  │  ├─ src/components/           # 独立可复用的 Vue 组件 (如 ExcelEditor, PprReportViewer)
+│  │  └─ src/index.ts              # 统一导出入口
+│  ├─ admin/                       # 独立管理控制台应用（@ppr/admin）
+│  │  ├─ src/
+│  │  │  ├─ views/                 # 各业务配置页面 (4.1~4.9)
+│  │  │  ├─ router/                # 动态路由与菜单
+│  │  │  ├─ store/                 # 状态管理 (Pinia)
+│  │  │  └─ layouts/               # 页面布局结构
+│  │  ├─ vite.config.ts            # 管理控制台构建配置
+│  │  └─ index.html                # 管理控制台入口
+│  ├─ embed/                       # 原生 JS 挂载产物（@ppr/embed）
+│  │  ├─ src/embed/entry.ts        # UMD 挂载入口，暴露全局 PPR.render
+│  │  └─ vite.config.ts            # 独立打包配置 (导出 UMD)
+│  ├─ vue/                         # @ppr/vue 组件封装（未来规划）
+│  └─ react/                       # @ppr/react 组件封装（未来规划）
 ```
 
 ### 9.4 关键约定
@@ -418,5 +418,5 @@ ppr-web/
 1. **接口分层：** `web/controller` 只做协议适配（参数接收/返回体），核心业务落在 `domain`，数据访问与外部依赖在 `infra`。
 2. **元数据库与业务数据库分离：** `infra/meta` 固定操作 SQLite 元数据；`infra/jdbc + infra/datasource` 负责外部数据源动态执行。
 3. **安全与权限为横切能力：** SQL 安全审查、DataScope 拼接、Sa-Token 校验、日志审计均以独立模块/包组织，避免散落在业务逻辑中。
-4. **前端产物解耦：** `core` 复用请求与类型；`embed/admin/vue/react` 只关心各自的构建入口与 UI 组织，减少重复代码。
+4. **前端产物解耦：** `core` 复用请求与类型，`components` 集中管理独立数据视图组件；`admin`（管理控制台）与 `embed`（原生挂载）按需引入核心与组件包，仅关心各自的构建入口与应用逻辑组织，实现彻底解耦并大幅减少重复代码。
 

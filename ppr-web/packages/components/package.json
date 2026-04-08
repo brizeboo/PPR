@@ -1,0 +1,14 @@
+{
+  "name": "@ppr/components",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "vue": "^3.5.10",
+    "echarts": "^6.0.0",
+    "element-plus": "^2.8.4",
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
+    "@ppr/core": "workspace:*"
+  }
+}
