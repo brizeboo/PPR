@@ -25,5 +25,7 @@ ppr:
   auth:
     enabled: false
     host-url: http://localhost:8081/api/auth/check
+  file:
+    storage-path: ./ppr-files
 
 

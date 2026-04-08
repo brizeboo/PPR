@@ -5,22 +5,26 @@ const route = useRoute();
 // 路由导航实例
 const router = useRouter();
 // 计算当前激活的菜单路径
-const activePath = computed(() => route.path);
-// 根据当前路径计算顶部标题
-const title = computed(() => {
-    if (route.path.startsWith('/datasource'))
-        return '数据源管理';
-    if (route.path.startsWith('/view-designer'))
-        return '视图设计器';
-    if (route.path.startsWith('/report-designer'))
-        return '报表设计器';
-    if (route.path.startsWith('/template-designer'))
-        return '模板设计器';
-    if (route.path.startsWith('/schedule'))
-        return '定时发送';
-    if (route.path.startsWith('/log'))
-        return '系统日志';
-    return 'PPR';
+const activePath = computed(() => {
+    // 如果路径以某些前缀开头，可以高亮特定的菜单项
+    const path = route.path;
+    if (path.startsWith('/datasource'))
+        return '/datasource';
+    if (path.startsWith('/view-designer'))
+        return '/view-designer';
+    if (path.startsWith('/report-designer'))
+        return '/report-designer';
+    if (path.startsWith('/template-designer'))
+        return '/template-designer';
+    if (path.startsWith('/file'))
+        return '/file';
+    if (path.startsWith('/schedule'))
+        return '/schedule';
+    if (path.startsWith('/log'))
+        return '/log';
+    if (path.startsWith('/setting'))
+        return '/setting';
+    return path;
 });
 /**
  * 菜单选中事件处理
@@ -36,6 +40,7 @@ const __VLS_ctx = {
 let __VLS_components;
 let __VLS_intrinsics;
 let __VLS_directives;
+/** @type {__VLS_StyleScopedClasses['header-menu']} */ ;
 let __VLS_0;
 /** @ts-ignore @type {typeof __VLS_components.elContainer | typeof __VLS_components.ElContainer | typeof __VLS_components.elContainer | typeof __VLS_components.ElContainer} */
 elContainer;
@@ -50,23 +55,25 @@ var __VLS_5 = {};
 /** @type {__VLS_StyleScopedClasses['admin-container']} */ ;
 const { default: __VLS_6 } = __VLS_3.slots;
 let __VLS_7;
-/** @ts-ignore @type {typeof __VLS_components.elAside | typeof __VLS_components.ElAside | typeof __VLS_components.elAside | typeof __VLS_components.ElAside} */
-elAside;
+/** @ts-ignore @type {typeof __VLS_components.elHeader | typeof __VLS_components.ElHeader | typeof __VLS_components.elHeader | typeof __VLS_components.ElHeader} */
+elHeader;
 // @ts-ignore
 const __VLS_8 = __VLS_asFunctionalComponent1(__VLS_7, new __VLS_7({
-    width: "220px",
-    ...{ class: "admin-aside" },
+    ...{ class: "admin-header" },
 }));
 const __VLS_9 = __VLS_8({
-    width: "220px",
-    ...{ class: "admin-aside" },
+    ...{ class: "admin-header" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_8));
-/** @type {__VLS_StyleScopedClasses['admin-aside']} */ ;
+/** @type {__VLS_StyleScopedClasses['admin-header']} */ ;
 const { default: __VLS_12 } = __VLS_10.slots;
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
-    ...{ class: "aside-logo" },
+    ...{ class: "header-left" },
 });
-/** @type {__VLS_StyleScopedClasses['aside-logo']} */ ;
+/** @type {__VLS_StyleScopedClasses['header-left']} */ ;
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+    ...{ class: "header-logo" },
+});
+/** @type {__VLS_StyleScopedClasses['header-logo']} */ ;
 let __VLS_13;
 /** @ts-ignore @type {typeof __VLS_components.elMenu | typeof __VLS_components.ElMenu | typeof __VLS_components.elMenu | typeof __VLS_components.ElMenu} */
 elMenu;
@@ -74,17 +81,21 @@ elMenu;
 const __VLS_14 = __VLS_asFunctionalComponent1(__VLS_13, new __VLS_13({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.activePath),
-    ...{ class: "aside-menu" },
+    mode: "horizontal",
+    ...{ class: "header-menu" },
+    ellipsis: (false),
 }));
 const __VLS_15 = __VLS_14({
     ...{ 'onSelect': {} },
     defaultActive: (__VLS_ctx.activePath),
-    ...{ class: "aside-menu" },
+    mode: "horizontal",
+    ...{ class: "header-menu" },
+    ellipsis: (false),
 }, ...__VLS_functionalComponentArgsRest(__VLS_14));
 let __VLS_18;
 const __VLS_19 = ({ select: {} },
     { onSelect: (__VLS_ctx.onSelect) });
-/** @type {__VLS_StyleScopedClasses['aside-menu']} */ ;
+/** @type {__VLS_StyleScopedClasses['header-menu']} */ ;
 const { default: __VLS_20 } = __VLS_16.slots;
 let __VLS_21;
 /** @ts-ignore @type {typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem | typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem} */
@@ -147,10 +158,10 @@ let __VLS_45;
 elMenuItem;
 // @ts-ignore
 const __VLS_46 = __VLS_asFunctionalComponent1(__VLS_45, new __VLS_45({
-    index: "/schedule",
+    index: "/file",
 }));
 const __VLS_47 = __VLS_46({
-    index: "/schedule",
+    index: "/file",
 }, ...__VLS_functionalComponentArgsRest(__VLS_46));
 const { default: __VLS_50 } = __VLS_48.slots;
 // @ts-ignore
@@ -161,53 +172,58 @@ let __VLS_51;
 elMenuItem;
 // @ts-ignore
 const __VLS_52 = __VLS_asFunctionalComponent1(__VLS_51, new __VLS_51({
-    index: "/log",
+    index: "/schedule",
 }));
 const __VLS_53 = __VLS_52({
-    index: "/log",
+    index: "/schedule",
 }, ...__VLS_functionalComponentArgsRest(__VLS_52));
 const { default: __VLS_56 } = __VLS_54.slots;
 // @ts-ignore
 [];
 var __VLS_54;
+let __VLS_57;
+/** @ts-ignore @type {typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem | typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem} */
+elMenuItem;
+// @ts-ignore
+const __VLS_58 = __VLS_asFunctionalComponent1(__VLS_57, new __VLS_57({
+    index: "/log",
+}));
+const __VLS_59 = __VLS_58({
+    index: "/log",
+}, ...__VLS_functionalComponentArgsRest(__VLS_58));
+const { default: __VLS_62 } = __VLS_60.slots;
+// @ts-ignore
+[];
+var __VLS_60;
+let __VLS_63;
+/** @ts-ignore @type {typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem | typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem} */
+elMenuItem;
+// @ts-ignore
+const __VLS_64 = __VLS_asFunctionalComponent1(__VLS_63, new __VLS_63({
+    index: "/setting",
+}));
+const __VLS_65 = __VLS_64({
+    index: "/setting",
+}, ...__VLS_functionalComponentArgsRest(__VLS_64));
+const { default: __VLS_68 } = __VLS_66.slots;
+// @ts-ignore
+[];
+var __VLS_66;
 // @ts-ignore
 [];
 var __VLS_16;
 var __VLS_17;
-// @ts-ignore
-[];
-var __VLS_10;
-let __VLS_57;
-/** @ts-ignore @type {typeof __VLS_components.elContainer | typeof __VLS_components.ElContainer | typeof __VLS_components.elContainer | typeof __VLS_components.ElContainer} */
-elContainer;
-// @ts-ignore
-const __VLS_58 = __VLS_asFunctionalComponent1(__VLS_57, new __VLS_57({}));
-const __VLS_59 = __VLS_58({}, ...__VLS_functionalComponentArgsRest(__VLS_58));
-const { default: __VLS_62 } = __VLS_60.slots;
-let __VLS_63;
-/** @ts-ignore @type {typeof __VLS_components.elHeader | typeof __VLS_components.ElHeader | typeof __VLS_components.elHeader | typeof __VLS_components.ElHeader} */
-elHeader;
-// @ts-ignore
-const __VLS_64 = __VLS_asFunctionalComponent1(__VLS_63, new __VLS_63({
-    ...{ class: "admin-header" },
-}));
-const __VLS_65 = __VLS_64({
-    ...{ class: "admin-header" },
-}, ...__VLS_functionalComponentArgsRest(__VLS_64));
-/** @type {__VLS_StyleScopedClasses['admin-header']} */ ;
-const { default: __VLS_68 } = __VLS_66.slots;
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
-    ...{ class: "header-title" },
+    ...{ class: "header-right" },
 });
-/** @type {__VLS_StyleScopedClasses['header-title']} */ ;
-(__VLS_ctx.title);
+/** @type {__VLS_StyleScopedClasses['header-right']} */ ;
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "header-user" },
 });
 /** @type {__VLS_StyleScopedClasses['header-user']} */ ;
 // @ts-ignore
-[title,];
-var __VLS_66;
+[];
+var __VLS_10;
 let __VLS_69;
 /** @ts-ignore @type {typeof __VLS_components.elMain | typeof __VLS_components.ElMain | typeof __VLS_components.elMain | typeof __VLS_components.ElMain} */
 elMain;
@@ -229,9 +245,6 @@ const __VLS_77 = __VLS_76({}, ...__VLS_functionalComponentArgsRest(__VLS_76));
 // @ts-ignore
 [];
 var __VLS_72;
-// @ts-ignore
-[];
-var __VLS_60;
 // @ts-ignore
 [];
 var __VLS_3;

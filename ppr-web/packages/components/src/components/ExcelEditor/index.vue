@@ -90,6 +90,13 @@ const handleDrop = (e: DragEvent) => {
 
 // Expose methods for parent components
 defineExpose({
+  getCurrentCell: () => {
+    if (spreadsheet && spreadsheet.sheet && spreadsheet.sheet.data && spreadsheet.sheet.data.selector) {
+      const { ri, ci } = spreadsheet.sheet.data.selector;
+      return { row: ri, col: ci };
+    }
+    return { row: 0, col: 0 };
+  },
   loadExcelFile: async (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {

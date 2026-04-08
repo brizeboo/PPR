@@ -27,6 +27,11 @@ const routes = [
                 component: () => import('@/views/template-designer/index.vue'),
             },
             {
+                path: 'file',
+                name: 'File',
+                component: () => import('@/views/file/index.vue'),
+            },
+            {
                 path: 'schedule',
                 name: 'Schedule',
                 component: () => import('@/views/schedule/index.vue'),
@@ -35,6 +40,11 @@ const routes = [
                 path: 'log',
                 name: 'Log',
                 component: () => import('@/views/log/index.vue'),
+            },
+            {
+                path: 'setting',
+                name: 'Setting',
+                component: () => import('@/views/setting/index.vue'),
             },
         ],
     },

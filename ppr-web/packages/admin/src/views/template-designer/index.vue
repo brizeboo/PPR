@@ -1,53 +1,79 @@
 <!-- 模板设计器组件 -->
 <template>
-  <div class="td-container">
-    <div class="td-header">
-      <div class="td-header-left">
-        <el-upload
-          class="upload-demo"
-          action="/api/v1/admin/template/upload"
-          :show-file-list="false"
-          :on-success="handleUploadSuccess"
-        >
-          <el-button type="primary">导入本地 Excel 文件</el-button>
-        </el-upload>
-        <span v-if="currentTemplate" class="td-text-muted">
-          当前模板：{{ currentTemplate.name }}
-        </span>
+  <div class="td-layout-wrapper">
+    <!-- 最左侧：导出模板列表栏 --> 
+    <div class="td-sidebar" style="width: 256px;">
+      <div class="td-sidebar-header">
+        <div class="td-sidebar-title">导出模板列表</div>
       </div>
-      <div>
-        <el-button type="success" :disabled="!currentTemplate" @click="saveMapping">保存模板</el-button>
+      <div class="td-field-list">
+        <div class="td-empty-text">暂无导出模板</div>
       </div>
     </div>
 
-    <div class="td-body">
-      <!-- 左侧数据源面板 -->
-      <div class="td-sidebar">
-        <div class="td-sidebar-title">数据源字段</div>
-        <el-select v-model="selectedReport" placeholder="请选择报表" @change="loadReportFields" style="margin-bottom: 16px;">
-          <!-- 假设已有报表列表 -->
-          <el-option label="示例报表1" value="1" />
-        </el-select>
-        
-        <div class="td-field-list">
-          <div 
-            v-for="field in availableFields" 
-            :key="field.prop"
-            class="td-field-item"
-            draggable="true"
-            @dragstart="onDragStart($event, field)"
-          >
-            {{ field.label }} ({{ field.prop }})
+    <!-- 右侧：设计器主体 -->
+    <div class="td-main">
+      <!-- 顶部工具栏 -->
+      <div class="td-panel">
+        <div class="td-toolbar">
+          <div class="td-toolbar-left">
+            <el-upload
+              class="upload-demo"
+              action="/api/v1/admin/template/upload"
+              :show-file-list="false"
+              :on-success="handleUploadSuccess"
+            >
+              <el-button type="primary">导入本地 Excel 文件</el-button>
+            </el-upload>
+            <el-input 
+              v-if="currentTemplate"
+              v-model="currentTemplate.name" 
+              placeholder="请输入模板名称" 
+              style="width: 200px;" 
+            />
           </div>
-          <div v-if="availableFields.length === 0" class="td-empty-text">
-            请先选择报表加载字段
+          <div class="td-toolbar-right">
+            <el-button type="default" @click="openDictSettings">字典设置</el-button>
+            <el-button type="default" @click="openTempDataExport" :disabled="!currentTemplate">临时数据导出</el-button>
+            <el-button type="primary" @click="exportTemplate" :disabled="!currentTemplate">导出</el-button>
+            <el-button type="success" :disabled="!currentTemplate" @click="saveMapping">保存模板</el-button>
           </div>
         </div>
       </div>
 
-      <!-- 右侧 Excel 设计器 -->
-      <div class="td-main">
-        <ExcelEditor ref="excelEditorRef" @drop="onEditorDrop" />
+      <!-- 中间主体内容区 -->
+      <div class="td-body">
+        <!-- 主设计器区域 -->
+        <div class="td-main-content">
+          <ExcelEditor ref="excelEditorRef" @drop="onEditorDrop" />
+        </div>
+
+        <!-- 右侧视图字段面板 -->
+        <div class="td-sidebar" style="width: 256px;">
+          <div class="td-sidebar-header">
+            <div class="td-sidebar-title">视图字段</div>
+          </div>
+          <el-select v-model="selectedView" placeholder="请选择查询视图" @change="loadViewFields" style="margin-bottom: 12px; width: 100%;">
+            <!-- 假设已有视图列表 -->
+            <el-option label="示例查询视图1" value="1" />
+          </el-select>
+          
+          <div class="td-field-list">
+            <div 
+              v-for="field in availableFields" 
+              :key="field.prop"
+              class="td-field-item"
+            >
+              <span>{{ field.label }} ({{ field.prop }})</span>
+              <el-button type="primary" link @click="addField(field)" title="添加到当前选中单元格">
+                <span style="font-size: 16px; font-weight: bold;">+</span>
+              </el-button>
+            </div>
+            <div v-if="availableFields.length === 0" class="td-empty-text">
+              请先选择查询视图加载字段
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -72,6 +98,36 @@
         </span>
       </template>
     </el-dialog>
+    
+    <!-- 临时数据导出弹窗 -->
+    <el-dialog v-model="tempDataDialogVisible" title="临时数据导出" width="500px">
+      <el-form label-position="top">
+        <el-form-item label="请输入临时数据 (JSON 格式)">
+          <el-input 
+            v-model="tempDataJson" 
+            type="textarea" 
+            :rows="10" 
+            placeholder='{"name": "张三", "age": 25, "score": 98}'
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="tempDataDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmTempDataExport">导出</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 字典设置弹窗 -->
+    <el-dialog v-model="dictSettingsDialogVisible" title="字典设置" width="600px">
+      <div class="td-empty-text" style="margin: 40px 0;">字典配置功能开发中...</div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dictSettingsDialogVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -88,13 +144,17 @@ const currentTemplate = ref<any>(null);
 // 字段映射配置列表
 const mappingConfigList = ref<any[]>([]);
 
-// 选中的报表ID
-const selectedReport = ref('');
+// 选中的查询视图ID
+const selectedView = ref('');
 // 可用的字段列表
 const availableFields = ref<any[]>([]);
 
-// 配置弹窗可见性
+// 弹窗可见性及相关状态
 const dialogVisible = ref(false);
+const tempDataDialogVisible = ref(false);
+const tempDataJson = ref('');
+const dictSettingsDialogVisible = ref(false);
+
 // 字段填充配置
 const fillConfig = ref({
   field: '',
@@ -119,10 +179,10 @@ const handleUploadSuccess = (response: any, uploadFile: any) => {
 };
 
 /**
- * 根据选择的报表加载对应字段
+ * 根据选择的查询视图加载对应字段
  */
-const loadReportFields = async () => {
-  // Mock 数据，实际应该调用 API 获取报表的列信息
+const loadViewFields = async () => {
+  // Mock 数据，实际应该调用 API 获取视图的列信息
   availableFields.value = [
     { prop: 'name', label: '姓名' },
     { prop: 'age', label: '年龄' },
@@ -131,16 +191,51 @@ const loadReportFields = async () => {
 };
 
 /**
- * 拖拽开始事件，设置拖拽数据
- * @param e 拖拽事件对象
- * @param field 被拖拽的字段
+ * 临时数据导出
  */
-const onDragStart = (e: DragEvent, field: any) => {
-  if (e.dataTransfer) {
-    e.dataTransfer.setData('text/plain', JSON.stringify({
-      field: field.prop,
-      label: field.label
-    }));
+const openTempDataExport = () => {
+  tempDataJson.value = '';
+  tempDataDialogVisible.value = true;
+};
+
+const confirmTempDataExport = () => {
+  try {
+    const data = JSON.parse(tempDataJson.value || '{}');
+    ElMessage.success('临时数据导出请求已发送 (Mock)');
+    tempDataDialogVisible.value = false;
+  } catch (e) {
+    ElMessage.error('JSON 格式错误，请检查');
+  }
+};
+
+/**
+ * 按照绑定视图导出
+ */
+const exportTemplate = () => {
+  ElMessage.success('按照绑定视图导出请求已发送 (Mock)');
+};
+
+/**
+ * 打开字典设置
+ */
+const openDictSettings = () => {
+  dictSettingsDialogVisible.value = true;
+};
+
+/**
+ * 添加字段到当前选中单元格
+ * @param field 被添加的字段
+ */
+const addField = (field: any) => {
+  if (excelEditorRef.value) {
+    const currentCell = excelEditorRef.value.getCurrentCell();
+    onEditorDrop({
+      row: currentCell.row,
+      col: currentCell.col,
+      value: { field: field.prop, label: field.label }
+    });
+  } else {
+    ElMessage.warning('请先等待编辑器加载完成');
   }
 };
 
@@ -192,60 +287,34 @@ const saveMapping = async () => {
 
 <style scoped>
 /* 整体容器 */
-.td-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* 顶部操作区 */
-.td-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 16px;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-/* 顶部左侧区域 */
-.td-header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* 次要文本 */
-.td-text-muted {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* 中间主体区域 */
-.td-body {
-  flex: 1;
+.td-layout-wrapper {
   display: flex;
   gap: 16px;
-  overflow: hidden;
+  height: calc(100vh - 120px);
 }
 
-/* 左侧边栏 */
+/* 侧边栏通用样式 */
 .td-sidebar {
-  width: 256px;
-  background: white;
-  padding: 16px;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: #fff;
+  flex-shrink: 0;
+}
+
+/* 侧边栏头部 */
+.td-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 /* 侧边栏标题 */
 .td-sidebar-title {
-  font-weight: bold;
-  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 /* 字段列表容器 */
@@ -257,15 +326,17 @@ const saveMapping = async () => {
   padding: 8px;
 }
 
-/* 可拖拽的字段项 */
+/* 字段项 */
 .td-field-item {
   padding: 8px;
   margin-bottom: 8px;
   background-color: #eff6ff;
   border: 1px solid #bfdbfe;
   border-radius: 4px;
-  cursor: move;
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* 空状态文本 */
@@ -276,14 +347,57 @@ const saveMapping = async () => {
   margin-top: 16px;
 }
 
-/* 右侧主设计器区域 */
+/* 右侧主区域 */
 .td-main {
   flex: 1;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 面板样式 (如顶部工具栏) */
+.td-panel {
   border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: #fff;
+  margin-bottom: 12px;
+}
+
+/* 工具栏样式 */
+.td-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.td-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.td-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 中间主体内容区 */
+.td-body {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* Excel 设计器容器 */
+.td-main-content {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
 }
 
 /* 占满宽度的选择框 */
