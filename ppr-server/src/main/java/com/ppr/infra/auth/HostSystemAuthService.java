@@ -24,7 +24,7 @@ public class HostSystemAuthService {
     }
 
     public AuthResult getAuthResult(String token) {
-        if (!authProperties.isEnabled()) {
+        if (!authProperties.getAuth().isEnabled()) {
             return new AuthResult(true, List.of(), null);
         }
 

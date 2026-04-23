@@ -15,3 +15,7 @@ export const changeScheduleStatus = (id: string, status: number) => {
 export const deleteSchedule = (id: string) => {
     return http.delete(`/api/v1/admin/schedule/${id}`);
 };
+
+export const executeSchedule = (id: string, email?: string) => {
+    return http.post(`/api/v1/admin/schedule/execute/${id}`, { email });
+};

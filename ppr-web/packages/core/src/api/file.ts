@@ -22,31 +22,31 @@ export interface FileListResponse {
 
 // Directory API
 export const getDirTree = () => {
-  return http.get<DirTreeNode>('/admin/file/dir/tree')
+  return http.get<DirTreeNode>('/api/v1/admin/file/dir/tree')
 }
 
 export const createDir = (path: string, name: string) => {
-  return http.post<{ success: boolean }>(`/admin/file/dir/create?path=${encodeURIComponent(path)}&name=${encodeURIComponent(name)}`)
+  return http.post<{ success: boolean }>(`/api/v1/admin/file/dir/create?path=${encodeURIComponent(path)}&name=${encodeURIComponent(name)}`)
 }
 
 export const renameDir = (path: string, newName: string) => {
-  return http.put<{ success: boolean }>(`/admin/file/dir/rename?path=${encodeURIComponent(path)}&newName=${encodeURIComponent(newName)}`)
+  return http.put<{ success: boolean }>(`/api/v1/admin/file/dir/rename?path=${encodeURIComponent(path)}&newName=${encodeURIComponent(newName)}`)
 }
 
 export const deleteDir = (path: string) => {
-  return http.delete<{ success: boolean }>(`/admin/file/dir/delete?path=${encodeURIComponent(path)}`)
+  return http.delete<{ success: boolean }>(`/api/v1/admin/file/dir/delete?path=${encodeURIComponent(path)}`)
 }
 
 // File API
 export const listFiles = (path: string, page: number = 1, size: number = 10) => {
-  return http.get<FileListResponse>(`/admin/file/list?path=${encodeURIComponent(path)}&page=${page}&size=${size}`)
+  return http.get<FileListResponse>(`/api/v1/admin/file/list?path=${encodeURIComponent(path)}&page=${page}&size=${size}`)
 }
 
 export const uploadFile = (file: File, path: string) => {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('path', path)
-  return http.post<{ success: boolean }>('/admin/file/upload', formData, {
+  return http.post<{ success: boolean }>('/api/v1/admin/file/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -54,11 +54,11 @@ export const uploadFile = (file: File, path: string) => {
 }
 
 export const downloadFileUrl = (path: string) => {
-  return `${http.defaults.baseURL}/admin/file/download?path=${encodeURIComponent(path)}`
+  return `${http.defaults.baseURL || ''}/api/v1/admin/file/download?path=${encodeURIComponent(path)}`
 }
 
 export const deleteFile = (path: string) => {
-  return http.delete<{ success: boolean }>(`/admin/file/delete?path=${encodeURIComponent(path)}`)
+  return http.delete<{ success: boolean }>(`/api/v1/admin/file/delete?path=${encodeURIComponent(path)}`)
 }
 
 export const getFileAccessUrl = (path: string) => {
@@ -67,5 +67,7 @@ export const getFileAccessUrl = (path: string) => {
   if(p.startsWith('/')) {
     p = p.substring(1);
   }
-  return `${window.location.origin}${baseUrl}/file/access/${p}`
+  const isAbsolute = /^https?:\/\//i.test(baseUrl);
+  const prefix = isAbsolute ? baseUrl : `${window.location.origin}${baseUrl}`;
+  return `${prefix}/file/access/${p}`
 }

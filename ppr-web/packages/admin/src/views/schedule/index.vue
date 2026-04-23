@@ -111,7 +111,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getScheduleList, saveSchedule, changeScheduleStatus, deleteSchedule } from '@ppr/core'
+import { getScheduleList, saveSchedule, changeScheduleStatus, deleteSchedule, executeSchedule } from '@ppr/core'
 import { getMailConfig, saveMailConfig, testMailSend } from '@ppr/core'
 import { listReports, type Report } from '@ppr/core'
 
@@ -242,8 +242,12 @@ function handleExecute(row: any) {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
   }).then(async ({ value }) => {
-    // TODO: 实现手动触发接口
-    ElMessage.success('触发指令已发送')
+    try {
+      await executeSchedule(row.id, value);
+      ElMessage.success('触发指令已发送，任务将异步执行');
+    } catch (e) {
+      ElMessage.error('执行触发失败');
+    }
   }).catch(() => {})
 }
 
