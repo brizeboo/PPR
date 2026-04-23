@@ -3,7 +3,7 @@
   <el-container class="admin-container">
     <el-header class="admin-header">
       <div class="header-left">
-        <div class="header-logo">PPR Admin</div>
+        <div class="header-logo">PPR</div>
         <el-menu 
           :default-active="activePath" 
           @select="onSelect" 
@@ -16,7 +16,6 @@
           <el-menu-item index="/report-designer">报表</el-menu-item>
           <el-menu-item index="/template-designer">模板</el-menu-item>
           <el-menu-item index="/file">文件</el-menu-item>
-          <el-menu-item index="/schedule">发送</el-menu-item>
           <el-menu-item index="/log">日志</el-menu-item>
           <el-menu-item index="/setting">设置</el-menu-item>
         </el-menu>
@@ -49,7 +48,6 @@ const activePath = computed(() => {
   if (path.startsWith('/report-designer')) return '/report-designer';
   if (path.startsWith('/template-designer')) return '/template-designer';
   if (path.startsWith('/file')) return '/file';
-  if (path.startsWith('/schedule')) return '/schedule';
   if (path.startsWith('/log')) return '/log';
   if (path.startsWith('/setting')) return '/setting';
   return path;

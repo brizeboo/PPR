@@ -16,5 +16,8 @@
     "minimist": "^1.2.8",
     "node-fetch": "^2.6.7",
     "tmp": "^0.2.4"
+  },
+  "dependencies": {
+    "pnpm": "^10.33.2"
   }
 }

@@ -1,9 +1,15 @@
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { ExcelEditor } from '@ppr/components';
-import { http } from '@ppr/core';
+import { http, listViews, getView, previewView } from '@ppr/core';
+// 模板上传 URL
+const uploadUrl = (http.defaults.baseURL || '') + '/api/v1/admin/template/upload';
 // Excel 编辑器组件引用
 const excelEditorRef = ref(null);
+// 模板列表
+const templateList = ref([]);
+// 视图列表
+const viewList = ref([]);
 // 当前加载的模板数据
 const currentTemplate = ref(null);
 // 字段映射配置列表
@@ -25,6 +31,47 @@ const fillConfig = ref({
     col: 0
 });
 /**
+ * 页面加载时获取模板和视图列表
+ */
+onMounted(async () => {
+    await Promise.all([loadTemplates(), loadViews()]);
+});
+const loadTemplates = async () => {
+    try {
+        const res = await http.get('/api/v1/admin/template/list');
+        templateList.value = res.data;
+    }
+    catch (e) {
+        ElMessage.error('加载模板列表失败');
+    }
+};
+const loadViews = async () => {
+    try {
+        const res = await listViews();
+        viewList.value = res.data;
+    }
+    catch (e) {
+        ElMessage.error('加载视图列表失败');
+    }
+};
+/**
+ * 选中模板
+ */
+const selectTemplate = async (tpl) => {
+    currentTemplate.value = tpl;
+    mappingConfigList.value = tpl.mappingConfig ? JSON.parse(tpl.mappingConfig) : [];
+    if (excelEditorRef.value) {
+        try {
+            const fileRes = await http.get(`/api/v1/template/file/${tpl.id}`, { responseType: 'blob' });
+            const file = new File([fileRes.data], tpl.name, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            await excelEditorRef.value.loadExcelFile(file);
+        }
+        catch (e) {
+            ElMessage.error('加载模板文件失败');
+        }
+    }
+};
+/**
  * 模板文件上传成功回调
  * @param response 服务端响应
  * @param uploadFile 上传的文件对象
@@ -33,6 +80,7 @@ const handleUploadSuccess = (response, uploadFile) => {
     currentTemplate.value = response;
     mappingConfigList.value = response.mappingConfig ? JSON.parse(response.mappingConfig) : [];
     ElMessage.success('上传成功');
+    loadTemplates(); // 重新加载列表
     if (excelEditorRef.value && uploadFile.raw) {
         excelEditorRef.value.loadExcelFile(uploadFile.raw);
     }
@@ -41,12 +89,30 @@ const handleUploadSuccess = (response, uploadFile) => {
  * 根据选择的查询视图加载对应字段
  */
 const loadViewFields = async () => {
-    // Mock 数据，实际应该调用 API 获取视图的列信息
-    availableFields.value = [
-        { prop: 'name', label: '姓名' },
-        { prop: 'age', label: '年龄' },
-        { prop: 'score', label: '分数' },
-    ];
+    if (!selectedView.value) {
+        availableFields.value = [];
+        return;
+    }
+    try {
+        const { data } = await getView(selectedView.value);
+        const view = data.view;
+        // 触发 preview 获取列信息 (limit 1)
+        const previewRes = await previewView({
+            datasourceId: view.datasourceId,
+            sqlContent: view.sqlContent,
+            paramDefs: data.params || [],
+            params: {},
+            translateDict: false
+        });
+        availableFields.value = previewRes.data.columns.map(c => ({
+            prop: c,
+            label: c
+        }));
+    }
+    catch (e) {
+        ElMessage.error('加载视图字段失败');
+        availableFields.value = [];
+    }
 };
 /**
  * 临时数据导出
@@ -55,21 +121,58 @@ const openTempDataExport = () => {
     tempDataJson.value = '';
     tempDataDialogVisible.value = true;
 };
-const confirmTempDataExport = () => {
+const confirmTempDataExport = async () => {
     try {
         const data = JSON.parse(tempDataJson.value || '{}');
-        ElMessage.success('临时数据导出请求已发送 (Mock)');
+        if (!currentTemplate.value) {
+            ElMessage.warning('请先选择模板');
+            return;
+        }
+        const res = await http.post(`/api/v1/template/export/${currentTemplate.value.id}`, data, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', currentTemplate.value.name || 'export.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        ElMessage.success('导出成功');
         tempDataDialogVisible.value = false;
     }
     catch (e) {
-        ElMessage.error('JSON 格式错误，请检查');
+        ElMessage.error('导出失败或 JSON 格式错误');
     }
 };
 /**
  * 按照绑定视图导出
  */
-const exportTemplate = () => {
-    ElMessage.success('按照绑定视图导出请求已发送 (Mock)');
+const exportTemplate = async () => {
+    if (!currentTemplate.value || !selectedView.value) {
+        ElMessage.warning('请先选择模板和视图');
+        return;
+    }
+    try {
+        const { data: viewData } = await getView(selectedView.value);
+        const previewRes = await previewView({
+            datasourceId: viewData.view.datasourceId,
+            sqlContent: viewData.view.sqlContent,
+            paramDefs: viewData.params || [],
+            params: {},
+            translateDict: false
+        });
+        const res = await http.post(`/api/v1/template/export/${currentTemplate.value.id}`, previewRes.data, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', currentTemplate.value.name || 'export.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        ElMessage.success('视图导出成功');
+    }
+    catch (e) {
+        ElMessage.error('按照视图导出失败');
+    }
 };
 /**
  * 打开字典设置
@@ -163,10 +266,30 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "td-field-list" },
 });
 /** @type {__VLS_StyleScopedClasses['td-field-list']} */ ;
-__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
-    ...{ class: "td-empty-text" },
-});
-/** @type {__VLS_StyleScopedClasses['td-empty-text']} */ ;
+for (const [tpl] of __VLS_vFor((__VLS_ctx.templateList))) {
+    __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+        ...{ onClick: (...[$event]) => {
+                __VLS_ctx.selectTemplate(tpl);
+                // @ts-ignore
+                [templateList, selectTemplate,];
+            } },
+        key: (tpl.id),
+        ...{ class: "td-field-item" },
+        ...{ style: {} },
+        ...{ style: ({ borderColor: __VLS_ctx.currentTemplate?.id === tpl.id ? '#409eff' : '#bfdbfe' }) },
+    });
+    /** @type {__VLS_StyleScopedClasses['td-field-item']} */ ;
+    __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({});
+    (tpl.name);
+    // @ts-ignore
+    [currentTemplate,];
+}
+if (__VLS_ctx.templateList.length === 0) {
+    __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+        ...{ class: "td-empty-text" },
+    });
+    /** @type {__VLS_StyleScopedClasses['td-empty-text']} */ ;
+}
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "td-main" },
 });
@@ -189,13 +312,13 @@ elUpload;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
     ...{ class: "upload-demo" },
-    action: "/api/v1/admin/template/upload",
+    action: (__VLS_ctx.uploadUrl),
     showFileList: (false),
     onSuccess: (__VLS_ctx.handleUploadSuccess),
 }));
 const __VLS_2 = __VLS_1({
     ...{ class: "upload-demo" },
-    action: "/api/v1/admin/template/upload",
+    action: (__VLS_ctx.uploadUrl),
     showFileList: (false),
     onSuccess: (__VLS_ctx.handleUploadSuccess),
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
@@ -213,7 +336,7 @@ const __VLS_8 = __VLS_7({
 }, ...__VLS_functionalComponentArgsRest(__VLS_7));
 const { default: __VLS_11 } = __VLS_9.slots;
 // @ts-ignore
-[handleUploadSuccess,];
+[templateList, uploadUrl, handleUploadSuccess,];
 var __VLS_9;
 // @ts-ignore
 [];
@@ -383,20 +506,26 @@ let __VLS_63;
 const __VLS_64 = ({ change: {} },
     { onChange: (__VLS_ctx.loadViewFields) });
 const { default: __VLS_65 } = __VLS_61.slots;
-let __VLS_66;
-/** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
-elOption;
+for (const [view] of __VLS_vFor((__VLS_ctx.viewList))) {
+    let __VLS_66;
+    /** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
+    elOption;
+    // @ts-ignore
+    const __VLS_67 = __VLS_asFunctionalComponent1(__VLS_66, new __VLS_66({
+        key: (view.id),
+        label: (view.name),
+        value: (view.id),
+    }));
+    const __VLS_68 = __VLS_67({
+        key: (view.id),
+        label: (view.name),
+        value: (view.id),
+    }, ...__VLS_functionalComponentArgsRest(__VLS_67));
+    // @ts-ignore
+    [onEditorDrop, selectedView, loadViewFields, viewList,];
+}
 // @ts-ignore
-const __VLS_67 = __VLS_asFunctionalComponent1(__VLS_66, new __VLS_66({
-    label: "示例查询视图1",
-    value: "1",
-}));
-const __VLS_68 = __VLS_67({
-    label: "示例查询视图1",
-    value: "1",
-}, ...__VLS_functionalComponentArgsRest(__VLS_67));
-// @ts-ignore
-[onEditorDrop, selectedView, loadViewFields,];
+[];
 var __VLS_61;
 var __VLS_62;
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({

@@ -32,11 +32,6 @@ const routes = [
                 component: () => import('@/views/file/index.vue'),
             },
             {
-                path: 'schedule',
-                name: 'Schedule',
-                component: () => import('@/views/schedule/index.vue'),
-            },
-            {
                 path: 'log',
                 name: 'Log',
                 component: () => import('@/views/log/index.vue'),

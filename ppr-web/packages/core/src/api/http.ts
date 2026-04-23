@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
@@ -14,15 +14,44 @@ http.interceptors.request.use((config) => {
   return config
 })
 
+/**
+ * 是否正在显示网络错误弹窗，防止并发请求时弹出多个模态框
+ */
+let isNetworkErrorShowing = false
+
 // 添加响应拦截器，处理未登录或 token 失效 (401)
 http.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // 触发全局未登录事件，由应用层决定弹窗
-      window.dispatchEvent(new CustomEvent('ppr-unauthorized'))
+    if (error.response) {
+      if (error.response.status === 401) {
+        // 触发全局未登录事件，由应用层决定弹窗
+        window.dispatchEvent(new CustomEvent('ppr-unauthorized'))
+      } else if (error.response.status === 502 || error.response.status === 504 || error.response.status === 503) {
+        // 开发环境下 Vite 代理连不上后台会返回 502/504
+        if (!isNetworkErrorShowing) {
+          isNetworkErrorShowing = true
+          ElMessageBox.alert('无法连接后台接口，请检查网络或后台服务状态。', '系统提示', {
+            confirmButtonText: '确定',
+            type: 'error',
+          }).finally(() => {
+            isNetworkErrorShowing = false
+          })
+        }
+      }
+    } else {
+      // 无法连接后台接口 (如网断了、生产环境无代理时后台服务没起等)
+      if (!isNetworkErrorShowing) {
+        isNetworkErrorShowing = true
+        ElMessageBox.alert('无法连接后台接口，请检查网络或后台服务状态。', '系统提示', {
+          confirmButtonText: '确定',
+          type: 'error',
+        }).finally(() => {
+          isNetworkErrorShowing = false
+        })
+      }
     }
     return Promise.reject(error)
   }

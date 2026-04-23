@@ -18,8 +18,6 @@ const activePath = computed(() => {
         return '/template-designer';
     if (path.startsWith('/file'))
         return '/file';
-    if (path.startsWith('/schedule'))
-        return '/schedule';
     if (path.startsWith('/log'))
         return '/log';
     if (path.startsWith('/setting'))
@@ -172,10 +170,10 @@ let __VLS_51;
 elMenuItem;
 // @ts-ignore
 const __VLS_52 = __VLS_asFunctionalComponent1(__VLS_51, new __VLS_51({
-    index: "/schedule",
+    index: "/log",
 }));
 const __VLS_53 = __VLS_52({
-    index: "/schedule",
+    index: "/log",
 }, ...__VLS_functionalComponentArgsRest(__VLS_52));
 const { default: __VLS_56 } = __VLS_54.slots;
 // @ts-ignore
@@ -186,29 +184,15 @@ let __VLS_57;
 elMenuItem;
 // @ts-ignore
 const __VLS_58 = __VLS_asFunctionalComponent1(__VLS_57, new __VLS_57({
-    index: "/log",
+    index: "/setting",
 }));
 const __VLS_59 = __VLS_58({
-    index: "/log",
+    index: "/setting",
 }, ...__VLS_functionalComponentArgsRest(__VLS_58));
 const { default: __VLS_62 } = __VLS_60.slots;
 // @ts-ignore
 [];
 var __VLS_60;
-let __VLS_63;
-/** @ts-ignore @type {typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem | typeof __VLS_components.elMenuItem | typeof __VLS_components.ElMenuItem} */
-elMenuItem;
-// @ts-ignore
-const __VLS_64 = __VLS_asFunctionalComponent1(__VLS_63, new __VLS_63({
-    index: "/setting",
-}));
-const __VLS_65 = __VLS_64({
-    index: "/setting",
-}, ...__VLS_functionalComponentArgsRest(__VLS_64));
-const { default: __VLS_68 } = __VLS_66.slots;
-// @ts-ignore
-[];
-var __VLS_66;
 // @ts-ignore
 [];
 var __VLS_16;
@@ -224,27 +208,27 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 // @ts-ignore
 [];
 var __VLS_10;
-let __VLS_69;
+let __VLS_63;
 /** @ts-ignore @type {typeof __VLS_components.elMain | typeof __VLS_components.ElMain | typeof __VLS_components.elMain | typeof __VLS_components.ElMain} */
 elMain;
 // @ts-ignore
-const __VLS_70 = __VLS_asFunctionalComponent1(__VLS_69, new __VLS_69({
+const __VLS_64 = __VLS_asFunctionalComponent1(__VLS_63, new __VLS_63({
     ...{ class: "admin-main" },
 }));
-const __VLS_71 = __VLS_70({
+const __VLS_65 = __VLS_64({
     ...{ class: "admin-main" },
-}, ...__VLS_functionalComponentArgsRest(__VLS_70));
+}, ...__VLS_functionalComponentArgsRest(__VLS_64));
 /** @type {__VLS_StyleScopedClasses['admin-main']} */ ;
-const { default: __VLS_74 } = __VLS_72.slots;
-let __VLS_75;
+const { default: __VLS_68 } = __VLS_66.slots;
+let __VLS_69;
 /** @ts-ignore @type {typeof __VLS_components.RouterView} */
 RouterView;
 // @ts-ignore
-const __VLS_76 = __VLS_asFunctionalComponent1(__VLS_75, new __VLS_75({}));
-const __VLS_77 = __VLS_76({}, ...__VLS_functionalComponentArgsRest(__VLS_76));
+const __VLS_70 = __VLS_asFunctionalComponent1(__VLS_69, new __VLS_69({}));
+const __VLS_71 = __VLS_70({}, ...__VLS_functionalComponentArgsRest(__VLS_70));
 // @ts-ignore
 [];
-var __VLS_72;
+var __VLS_66;
 // @ts-ignore
 [];
 var __VLS_3;
