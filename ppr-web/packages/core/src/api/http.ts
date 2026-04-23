@@ -19,9 +19,15 @@ http.interceptors.request.use((config) => {
  */
 let isNetworkErrorShowing = false
 
-// 添加响应拦截器，处理未登录或 token 失效 (401)
+// 添加响应拦截器，处理未登录或 token 失效 (401 及 ADMIN_KEY_INVALID)
 http.interceptors.response.use(
   (response) => {
+    // 处理后端返回 200，但标识管理员密钥失效的情况
+    if (response.data && response.data.success === false && response.data.code === 'ADMIN_KEY_INVALID') {
+      // 触发全局未登录事件，弹出管理员密钥输入框
+      window.dispatchEvent(new CustomEvent('ppr-unauthorized'))
+      return Promise.reject(new Error(response.data.message || '管理员密钥验证失败'))
+    }
     return response;
   },
   (error) => {

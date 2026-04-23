@@ -29,7 +29,7 @@
         <el-input v-model="form.name" />
       </el-form-item>
       <el-form-item label="类型" prop="type">
-        <el-select v-model="form.type" class="ds-select-full">
+        <el-select v-model="form.type" class="ds-select-full" @change="handleTypeChange">
           <el-option label="MySQL" value="MySQL" />
           <el-option label="PostgreSQL" value="PostgreSQL" />
           <el-option label="SQLServer" value="SQLServer" />
@@ -92,6 +92,24 @@ const rules: FormRules = {
 const drawerTitle = computed(() => (form.id ? '编辑数据源' : '新增数据源'))
 
 /**
+ * 默认的 JDBC URL 示例字典
+ */
+const defaultJdbcUrls: Record<string, string> = {
+  MySQL: 'jdbc:mysql://localhost:3306/database',
+  PostgreSQL: 'jdbc:postgresql://localhost:5432/database',
+  SQLServer: 'jdbc:sqlserver://localhost:1433;databaseName=database',
+  SQLite: 'jdbc:sqlite:/path/to/database.db',
+}
+
+/**
+ * 监听数据库类型变化，自动填充示例 JDBC URL
+ * @param type 数据库类型
+ */
+function handleTypeChange(type: string) {
+  form.jdbcUrl = defaultJdbcUrls[type] || ''
+}
+
+/**
  * 重新加载数据源列表
  */
 async function reload() {
@@ -106,7 +124,7 @@ function openCreate() {
   form.id = ''
   form.name = ''
   form.type = 'MySQL'
-  form.jdbcUrl = ''
+  form.jdbcUrl = defaultJdbcUrls['MySQL']
   form.username = ''
   form.password = ''
   drawerOpen.value = true
@@ -133,10 +151,15 @@ async function onSave() {
   const ok = await formRef.value?.validate().catch(() => false)
   if (!ok) return
 
-  await saveDatasource(form)
-  ElMessage.success('保存成功')
-  drawerOpen.value = false
-  await reload()
+  try {
+    await saveDatasource(form)
+    ElMessage.success('保存成功')
+    drawerOpen.value = false
+    await reload()
+  } catch (error: any) {
+    const message = error.response?.data?.message || error.message || '保存失败'
+    ElMessage.error(message)
+  }
 }
 
 /**

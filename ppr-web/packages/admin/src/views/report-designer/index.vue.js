@@ -107,7 +107,8 @@ async function save() {
         previewReport();
     }
     catch (e) {
-        ElMessage.error('保存失败: ' + e.message);
+        const msg = e.response?.data?.message || e.message || '';
+        ElMessage.error('保存失败: ' + msg);
     }
 }
 /**

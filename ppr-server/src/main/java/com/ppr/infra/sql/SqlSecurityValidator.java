@@ -2,7 +2,6 @@ package com.ppr.infra.sql;
 
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.select.Select;
 
 import java.util.regex.Pattern;
@@ -15,9 +14,9 @@ public class SqlSecurityValidator {
     public void validateSelectOnly(String sql) {
         String sqlForParse = normalizeForParser(sql);
 
-        Statements statements;
+        Statement statement;
         try {
-            statements = CCJSqlParserUtil.parseStatements(sqlForParse);
+            statement = CCJSqlParserUtil.parse(sqlForParse);
         } catch (Exception e) {
             String detail = sanitizeParserMessage(e.getMessage());
             if (detail == null || detail.isBlank()) {
@@ -26,14 +25,12 @@ public class SqlSecurityValidator {
             throw new SqlSecurityException("SQL 解析失败: " + detail, e);
         }
 
-        if (statements == null || statements.getStatements() == null || statements.getStatements().isEmpty()) {
+        if (statement == null) {
             throw new SqlSecurityException("SQL 不能为空");
         }
 
-        for (Statement statement : statements.getStatements()) {
-            if (!(statement instanceof Select)) {
-                throw new SqlSecurityException("仅允许执行查询类 SQL");
-            }
+        if (!(statement instanceof Select)) {
+            throw new SqlSecurityException("仅允许执行查询类 SQL");
         }
     }
 

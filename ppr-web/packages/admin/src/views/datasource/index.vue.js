@@ -25,6 +25,22 @@ const rules = {
 // 抽屉标题，根据是否存在 id 判断是编辑还是新增
 const drawerTitle = computed(() => (form.id ? '编辑数据源' : '新增数据源'));
 /**
+ * 默认的 JDBC URL 示例字典
+ */
+const defaultJdbcUrls = {
+    MySQL: 'jdbc:mysql://localhost:3306/database',
+    PostgreSQL: 'jdbc:postgresql://localhost:5432/database',
+    SQLServer: 'jdbc:sqlserver://localhost:1433;databaseName=database',
+    SQLite: 'jdbc:sqlite:/path/to/database.db',
+};
+/**
+ * 监听数据库类型变化，自动填充示例 JDBC URL
+ * @param type 数据库类型
+ */
+function handleTypeChange(type) {
+    form.jdbcUrl = defaultJdbcUrls[type] || '';
+}
+/**
  * 重新加载数据源列表
  */
 async function reload() {
@@ -38,7 +54,7 @@ function openCreate() {
     form.id = '';
     form.name = '';
     form.type = 'MySQL';
-    form.jdbcUrl = '';
+    form.jdbcUrl = defaultJdbcUrls['MySQL'];
     form.username = '';
     form.password = '';
     drawerOpen.value = true;
@@ -63,10 +79,16 @@ async function onSave() {
     const ok = await formRef.value?.validate().catch(() => false);
     if (!ok)
         return;
-    await saveDatasource(form);
-    ElMessage.success('保存成功');
-    drawerOpen.value = false;
-    await reload();
+    try {
+        await saveDatasource(form);
+        ElMessage.success('保存成功');
+        drawerOpen.value = false;
+        await reload();
+    }
+    catch (error) {
+        const message = error.response?.data?.message || error.message || '保存失败';
+        ElMessage.error(message);
+    }
 }
 /**
  * 删除数据源
@@ -405,220 +427,226 @@ let __VLS_103;
 elSelect;
 // @ts-ignore
 const __VLS_104 = __VLS_asFunctionalComponent1(__VLS_103, new __VLS_103({
+    ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.form.type),
     ...{ class: "ds-select-full" },
 }));
 const __VLS_105 = __VLS_104({
+    ...{ 'onChange': {} },
     modelValue: (__VLS_ctx.form.type),
     ...{ class: "ds-select-full" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_104));
+let __VLS_108;
+const __VLS_109 = ({ change: {} },
+    { onChange: (__VLS_ctx.handleTypeChange) });
 /** @type {__VLS_StyleScopedClasses['ds-select-full']} */ ;
-const { default: __VLS_108 } = __VLS_106.slots;
-let __VLS_109;
+const { default: __VLS_110 } = __VLS_106.slots;
+let __VLS_111;
 /** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
 elOption;
 // @ts-ignore
-const __VLS_110 = __VLS_asFunctionalComponent1(__VLS_109, new __VLS_109({
+const __VLS_112 = __VLS_asFunctionalComponent1(__VLS_111, new __VLS_111({
     label: "MySQL",
     value: "MySQL",
 }));
-const __VLS_111 = __VLS_110({
+const __VLS_113 = __VLS_112({
     label: "MySQL",
     value: "MySQL",
-}, ...__VLS_functionalComponentArgsRest(__VLS_110));
-let __VLS_114;
+}, ...__VLS_functionalComponentArgsRest(__VLS_112));
+let __VLS_116;
 /** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
 elOption;
 // @ts-ignore
-const __VLS_115 = __VLS_asFunctionalComponent1(__VLS_114, new __VLS_114({
+const __VLS_117 = __VLS_asFunctionalComponent1(__VLS_116, new __VLS_116({
     label: "PostgreSQL",
     value: "PostgreSQL",
 }));
-const __VLS_116 = __VLS_115({
+const __VLS_118 = __VLS_117({
     label: "PostgreSQL",
     value: "PostgreSQL",
-}, ...__VLS_functionalComponentArgsRest(__VLS_115));
-let __VLS_119;
+}, ...__VLS_functionalComponentArgsRest(__VLS_117));
+let __VLS_121;
 /** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
 elOption;
 // @ts-ignore
-const __VLS_120 = __VLS_asFunctionalComponent1(__VLS_119, new __VLS_119({
+const __VLS_122 = __VLS_asFunctionalComponent1(__VLS_121, new __VLS_121({
     label: "SQLServer",
     value: "SQLServer",
 }));
-const __VLS_121 = __VLS_120({
+const __VLS_123 = __VLS_122({
     label: "SQLServer",
     value: "SQLServer",
-}, ...__VLS_functionalComponentArgsRest(__VLS_120));
-let __VLS_124;
+}, ...__VLS_functionalComponentArgsRest(__VLS_122));
+let __VLS_126;
 /** @ts-ignore @type {typeof __VLS_components.elOption | typeof __VLS_components.ElOption} */
 elOption;
 // @ts-ignore
-const __VLS_125 = __VLS_asFunctionalComponent1(__VLS_124, new __VLS_124({
+const __VLS_127 = __VLS_asFunctionalComponent1(__VLS_126, new __VLS_126({
     label: "SQLite",
     value: "SQLite",
 }));
-const __VLS_126 = __VLS_125({
+const __VLS_128 = __VLS_127({
     label: "SQLite",
     value: "SQLite",
-}, ...__VLS_functionalComponentArgsRest(__VLS_125));
+}, ...__VLS_functionalComponentArgsRest(__VLS_127));
 // @ts-ignore
-[form,];
+[form, handleTypeChange,];
 var __VLS_106;
+var __VLS_107;
 // @ts-ignore
 [];
 var __VLS_100;
-let __VLS_129;
+let __VLS_131;
 /** @ts-ignore @type {typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem | typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem} */
 elFormItem;
 // @ts-ignore
-const __VLS_130 = __VLS_asFunctionalComponent1(__VLS_129, new __VLS_129({
+const __VLS_132 = __VLS_asFunctionalComponent1(__VLS_131, new __VLS_131({
     label: "JDBC URL",
     prop: "jdbcUrl",
 }));
-const __VLS_131 = __VLS_130({
+const __VLS_133 = __VLS_132({
     label: "JDBC URL",
     prop: "jdbcUrl",
-}, ...__VLS_functionalComponentArgsRest(__VLS_130));
-const { default: __VLS_134 } = __VLS_132.slots;
-let __VLS_135;
+}, ...__VLS_functionalComponentArgsRest(__VLS_132));
+const { default: __VLS_136 } = __VLS_134.slots;
+let __VLS_137;
 /** @ts-ignore @type {typeof __VLS_components.elInput | typeof __VLS_components.ElInput} */
 elInput;
 // @ts-ignore
-const __VLS_136 = __VLS_asFunctionalComponent1(__VLS_135, new __VLS_135({
+const __VLS_138 = __VLS_asFunctionalComponent1(__VLS_137, new __VLS_137({
     modelValue: (__VLS_ctx.form.jdbcUrl),
 }));
-const __VLS_137 = __VLS_136({
+const __VLS_139 = __VLS_138({
     modelValue: (__VLS_ctx.form.jdbcUrl),
-}, ...__VLS_functionalComponentArgsRest(__VLS_136));
+}, ...__VLS_functionalComponentArgsRest(__VLS_138));
 // @ts-ignore
 [form,];
-var __VLS_132;
-let __VLS_140;
+var __VLS_134;
+let __VLS_142;
 /** @ts-ignore @type {typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem | typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem} */
 elFormItem;
 // @ts-ignore
-const __VLS_141 = __VLS_asFunctionalComponent1(__VLS_140, new __VLS_140({
+const __VLS_143 = __VLS_asFunctionalComponent1(__VLS_142, new __VLS_142({
     label: "账号",
 }));
-const __VLS_142 = __VLS_141({
+const __VLS_144 = __VLS_143({
     label: "账号",
-}, ...__VLS_functionalComponentArgsRest(__VLS_141));
-const { default: __VLS_145 } = __VLS_143.slots;
-let __VLS_146;
+}, ...__VLS_functionalComponentArgsRest(__VLS_143));
+const { default: __VLS_147 } = __VLS_145.slots;
+let __VLS_148;
 /** @ts-ignore @type {typeof __VLS_components.elInput | typeof __VLS_components.ElInput} */
 elInput;
 // @ts-ignore
-const __VLS_147 = __VLS_asFunctionalComponent1(__VLS_146, new __VLS_146({
+const __VLS_149 = __VLS_asFunctionalComponent1(__VLS_148, new __VLS_148({
     modelValue: (__VLS_ctx.form.username),
 }));
-const __VLS_148 = __VLS_147({
+const __VLS_150 = __VLS_149({
     modelValue: (__VLS_ctx.form.username),
-}, ...__VLS_functionalComponentArgsRest(__VLS_147));
+}, ...__VLS_functionalComponentArgsRest(__VLS_149));
 // @ts-ignore
 [form,];
-var __VLS_143;
-let __VLS_151;
+var __VLS_145;
+let __VLS_153;
 /** @ts-ignore @type {typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem | typeof __VLS_components.elFormItem | typeof __VLS_components.ElFormItem} */
 elFormItem;
 // @ts-ignore
-const __VLS_152 = __VLS_asFunctionalComponent1(__VLS_151, new __VLS_151({
+const __VLS_154 = __VLS_asFunctionalComponent1(__VLS_153, new __VLS_153({
     label: "密码",
 }));
-const __VLS_153 = __VLS_152({
+const __VLS_155 = __VLS_154({
     label: "密码",
-}, ...__VLS_functionalComponentArgsRest(__VLS_152));
-const { default: __VLS_156 } = __VLS_154.slots;
-let __VLS_157;
+}, ...__VLS_functionalComponentArgsRest(__VLS_154));
+const { default: __VLS_158 } = __VLS_156.slots;
+let __VLS_159;
 /** @ts-ignore @type {typeof __VLS_components.elInput | typeof __VLS_components.ElInput} */
 elInput;
 // @ts-ignore
-const __VLS_158 = __VLS_asFunctionalComponent1(__VLS_157, new __VLS_157({
+const __VLS_160 = __VLS_asFunctionalComponent1(__VLS_159, new __VLS_159({
     modelValue: (__VLS_ctx.form.password),
     type: "password",
     showPassword: true,
 }));
-const __VLS_159 = __VLS_158({
+const __VLS_161 = __VLS_160({
     modelValue: (__VLS_ctx.form.password),
     type: "password",
     showPassword: true,
-}, ...__VLS_functionalComponentArgsRest(__VLS_158));
+}, ...__VLS_functionalComponentArgsRest(__VLS_160));
 // @ts-ignore
 [form,];
-var __VLS_154;
+var __VLS_156;
 // @ts-ignore
 [];
 var __VLS_81;
 {
-    const { footer: __VLS_162 } = __VLS_75.slots;
+    const { footer: __VLS_164 } = __VLS_75.slots;
     __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
         ...{ class: "ds-drawer-footer" },
     });
     /** @type {__VLS_StyleScopedClasses['ds-drawer-footer']} */ ;
-    let __VLS_163;
+    let __VLS_165;
     /** @ts-ignore @type {typeof __VLS_components.elButton | typeof __VLS_components.ElButton | typeof __VLS_components.elButton | typeof __VLS_components.ElButton} */
     elButton;
     // @ts-ignore
-    const __VLS_164 = __VLS_asFunctionalComponent1(__VLS_163, new __VLS_163({
+    const __VLS_166 = __VLS_asFunctionalComponent1(__VLS_165, new __VLS_165({
         ...{ 'onClick': {} },
     }));
-    const __VLS_165 = __VLS_164({
+    const __VLS_167 = __VLS_166({
         ...{ 'onClick': {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_164));
-    let __VLS_168;
-    const __VLS_169 = ({ click: {} },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_166));
+    let __VLS_170;
+    const __VLS_171 = ({ click: {} },
         { onClick: (__VLS_ctx.onTestForm) });
-    const { default: __VLS_170 } = __VLS_166.slots;
+    const { default: __VLS_172 } = __VLS_168.slots;
     // @ts-ignore
     [onTestForm,];
-    var __VLS_166;
-    var __VLS_167;
+    var __VLS_168;
+    var __VLS_169;
     __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
         ...{ class: "ds-drawer-actions" },
     });
     /** @type {__VLS_StyleScopedClasses['ds-drawer-actions']} */ ;
-    let __VLS_171;
+    let __VLS_173;
     /** @ts-ignore @type {typeof __VLS_components.elButton | typeof __VLS_components.ElButton | typeof __VLS_components.elButton | typeof __VLS_components.ElButton} */
     elButton;
     // @ts-ignore
-    const __VLS_172 = __VLS_asFunctionalComponent1(__VLS_171, new __VLS_171({
+    const __VLS_174 = __VLS_asFunctionalComponent1(__VLS_173, new __VLS_173({
         ...{ 'onClick': {} },
     }));
-    const __VLS_173 = __VLS_172({
+    const __VLS_175 = __VLS_174({
         ...{ 'onClick': {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_172));
-    let __VLS_176;
-    const __VLS_177 = ({ click: {} },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_174));
+    let __VLS_178;
+    const __VLS_179 = ({ click: {} },
         { onClick: (...[$event]) => {
                 __VLS_ctx.drawerOpen = false;
                 // @ts-ignore
                 [drawerOpen,];
             } });
-    const { default: __VLS_178 } = __VLS_174.slots;
+    const { default: __VLS_180 } = __VLS_176.slots;
     // @ts-ignore
     [];
-    var __VLS_174;
-    var __VLS_175;
-    let __VLS_179;
+    var __VLS_176;
+    var __VLS_177;
+    let __VLS_181;
     /** @ts-ignore @type {typeof __VLS_components.elButton | typeof __VLS_components.ElButton | typeof __VLS_components.elButton | typeof __VLS_components.ElButton} */
     elButton;
     // @ts-ignore
-    const __VLS_180 = __VLS_asFunctionalComponent1(__VLS_179, new __VLS_179({
+    const __VLS_182 = __VLS_asFunctionalComponent1(__VLS_181, new __VLS_181({
         ...{ 'onClick': {} },
         type: "primary",
     }));
-    const __VLS_181 = __VLS_180({
+    const __VLS_183 = __VLS_182({
         ...{ 'onClick': {} },
         type: "primary",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_180));
-    let __VLS_184;
-    const __VLS_185 = ({ click: {} },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_182));
+    let __VLS_186;
+    const __VLS_187 = ({ click: {} },
         { onClick: (__VLS_ctx.onSave) });
-    const { default: __VLS_186 } = __VLS_182.slots;
+    const { default: __VLS_188 } = __VLS_184.slots;
     // @ts-ignore
     [onSave,];
-    var __VLS_182;
-    var __VLS_183;
+    var __VLS_184;
+    var __VLS_185;
     // @ts-ignore
     [];
 }

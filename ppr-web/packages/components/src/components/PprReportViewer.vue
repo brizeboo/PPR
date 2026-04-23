@@ -109,7 +109,12 @@ async function init() {
       startPolling(data.pollingInterval)
     }
   } catch (error: any) {
-    ElMessage.error('加载报表失败: ' + error.message)
+    const msg = error.response?.data?.message || error.message || '';
+    if (msg.includes('SQL 解析失败')) {
+      ElMessage.error('SQL 语法错误，请检查您的 SQL 语句');
+    } else {
+      ElMessage.error('加载报表失败: ' + msg);
+    }
   } finally {
     loading.value = false
   }
@@ -185,7 +190,12 @@ async function fetchData() {
       }
     }
   } catch (error: any) {
-    ElMessage.error('获取数据失败: ' + error.message)
+    const msg = error.response?.data?.message || error.message || '';
+    if (msg.includes('SQL 解析失败')) {
+      ElMessage.error('SQL 语法错误，请检查您的 SQL 语句');
+    } else {
+      ElMessage.error('获取数据失败: ' + msg);
+    }
   } finally {
     loading.value = false
   }

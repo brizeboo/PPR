@@ -22,12 +22,14 @@ mybatis-plus:
     map-underscore-to-camel-case: true
 
 ppr:
-  admin-key:
-    enabled: true
+  admin:
+    enabled: true # 是否开启admin管理页面
+    admin-key: "ppr-admin-123456" # 管理员密钥，如果为空代表不需要管理员密钥
+    allowed-ips: "0.0.0.0" # 允许访问控制台的IP列表，多个用逗号分隔。0.0.0.0 或留空表示不限制
   auth:
     enabled: false
     host-url: http://localhost:8081/api/auth/check
   file:
-    storage-path: ./ppr-files
+    storage-path: ./files
 
 

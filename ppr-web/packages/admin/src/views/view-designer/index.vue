@@ -7,6 +7,7 @@
 
   <el-table :data="filteredViews" border height="calc(100vh - 180px)">
     <el-table-column prop="name" label="视图名称" min-width="120" show-overflow-tooltip />
+    <el-table-column prop="sqlContent" label="SQL" min-width="200" show-overflow-tooltip />
     <el-table-column label="操作" width="220" fixed="right">
       <template #default="{ row }">
         <el-button size="small" @click.stop="editView(row)">编辑</el-button>
@@ -296,11 +297,16 @@ async function save() {
       required: p.required,
     })),
   }
-  const { data } = await saveView(payload)
-  viewForm.id = data.id
-  selectedViewId.value = data.id
-  ElMessage.success('保存成功')
-  await reloadViews()
+  try {
+    const { data } = await saveView(payload)
+    viewForm.id = data.id
+    selectedViewId.value = data.id
+    ElMessage.success('保存成功')
+    await reloadViews()
+  } catch (e: any) {
+    const msg = e.response?.data?.message || e.message || '保存失败'
+    ElMessage.error('保存失败: ' + msg)
+  }
 }
 
 /**
@@ -326,11 +332,20 @@ async function runPreview() {
           })),
           params,
         }
-  const { data } = await previewView(req)
-  preview.columns = data.columns
-  preview.rows = data.rows
-  ElMessage.success('运行成功')
-  drawerOpen.value = true
+  try {
+    const { data } = await previewView(req)
+    preview.columns = data.columns
+    preview.rows = data.rows
+    ElMessage.success('运行成功')
+    drawerOpen.value = true
+  } catch (e: any) {
+    const msg = e.response?.data?.message || e.message || '运行失败'
+    if (msg.includes('SQL 解析失败')) {
+      ElMessage.error('SQL 语法错误，请检查您的 SQL 语句')
+    } else {
+      ElMessage.error('运行失败: ' + msg)
+    }
+  }
 }
 
 /**
@@ -338,21 +353,34 @@ async function runPreview() {
  */
 async function runPreviewRow(row: View) {
   const req = { viewId: String(row.id), params: {} }
-  const { data } = await previewView(req)
-  preview.columns = data.columns
-  preview.rows = data.rows
-  ElMessage.success('运行成功')
-  drawerOpen.value = true
+  try {
+    const { data } = await previewView(req)
+    preview.columns = data.columns
+    preview.rows = data.rows
+    ElMessage.success('运行成功')
+    drawerOpen.value = true
+  } catch (e: any) {
+    const msg = e.response?.data?.message || e.message || '运行失败'
+    if (msg.includes('SQL 解析失败')) {
+      ElMessage.error('SQL 语法错误，请检查您的 SQL 语句')
+    } else {
+      ElMessage.error('运行失败: ' + msg)
+    }
+  }
 }
 
 /**
  * 删除视图
- * @param id 视图ID
  */
 async function onDelete(id: string) {
-  await deleteView(id)
-  ElMessage.success('删除成功')
-  await reloadViews()
+  try {
+    await deleteView(id)
+    ElMessage.success('删除成功')
+    await reloadViews()
+  } catch (e: any) {
+    const msg = e.response?.data?.message || e.message || '删除失败'
+    ElMessage.error('删除失败: ' + msg)
+  }
 }
 
 onMounted(async () => {

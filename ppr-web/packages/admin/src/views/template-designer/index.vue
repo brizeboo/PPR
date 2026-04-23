@@ -268,8 +268,13 @@ const loadViewFields = async () => {
       prop: c,
       label: c
     }));
-  } catch (e) {
-    ElMessage.error('加载视图字段失败');
+  } catch (e: any) {
+    const msg = e.response?.data?.message || e.message || '';
+    if (msg.includes('SQL 解析失败')) {
+      ElMessage.error('SQL 语法错误，请检查您的 SQL 语句');
+    } else {
+      ElMessage.error('加载视图字段失败');
+    }
     availableFields.value = [];
   }
 };

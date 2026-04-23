@@ -163,11 +163,17 @@ async function save() {
             required: p.required,
         })),
     };
-    const { data } = await saveView(payload);
-    viewForm.id = data.id;
-    selectedViewId.value = data.id;
-    ElMessage.success('保存成功');
-    await reloadViews();
+    try {
+        const { data } = await saveView(payload);
+        viewForm.id = data.id;
+        selectedViewId.value = data.id;
+        ElMessage.success('保存成功');
+        await reloadViews();
+    }
+    catch (e) {
+        const msg = e.response?.data?.message || e.message || '保存失败';
+        ElMessage.error('保存失败: ' + msg);
+    }
 }
 /**
  * 运行并预览视图结果
@@ -191,31 +197,58 @@ async function runPreview() {
             })),
             params,
         };
-    const { data } = await previewView(req);
-    preview.columns = data.columns;
-    preview.rows = data.rows;
-    ElMessage.success('运行成功');
-    drawerOpen.value = true;
+    try {
+        const { data } = await previewView(req);
+        preview.columns = data.columns;
+        preview.rows = data.rows;
+        ElMessage.success('运行成功');
+        drawerOpen.value = true;
+    }
+    catch (e) {
+        const msg = e.response?.data?.message || e.message || '运行失败';
+        if (msg.includes('SQL 解析失败')) {
+            ElMessage.error('SQL 语法错误，请检查您的 SQL 语句');
+        }
+        else {
+            ElMessage.error('运行失败: ' + msg);
+        }
+    }
 }
 /**
  * 在表格中直接运行并预览某行视图
  */
 async function runPreviewRow(row) {
     const req = { viewId: String(row.id), params: {} };
-    const { data } = await previewView(req);
-    preview.columns = data.columns;
-    preview.rows = data.rows;
-    ElMessage.success('运行成功');
-    drawerOpen.value = true;
+    try {
+        const { data } = await previewView(req);
+        preview.columns = data.columns;
+        preview.rows = data.rows;
+        ElMessage.success('运行成功');
+        drawerOpen.value = true;
+    }
+    catch (e) {
+        const msg = e.response?.data?.message || e.message || '运行失败';
+        if (msg.includes('SQL 解析失败')) {
+            ElMessage.error('SQL 语法错误，请检查您的 SQL 语句');
+        }
+        else {
+            ElMessage.error('运行失败: ' + msg);
+        }
+    }
 }
 /**
  * 删除视图
- * @param id 视图ID
  */
 async function onDelete(id) {
-    await deleteView(id);
-    ElMessage.success('删除成功');
-    await reloadViews();
+    try {
+        await deleteView(id);
+        ElMessage.success('删除成功');
+        await reloadViews();
+    }
+    catch (e) {
+        const msg = e.response?.data?.message || e.message || '删除失败';
+        ElMessage.error('删除失败: ' + msg);
+    }
 }
 onMounted(async () => {
     await reloadDatasources();

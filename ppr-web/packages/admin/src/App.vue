@@ -40,19 +40,30 @@ const verifying = ref(false);
 const checkAuthStatus = async () => {
   try {
     const { data } = await http.get('/api/v1/admin/auth/status');
-    if (data && data.enabled) {
-      // 检查 URL 参数
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlKey = urlParams.get('adminkey');
+    if (data) {
+      if (!data.enabled) {
+        // 如果管理页面被禁用，可以做一些提示或者重定向
+        ElMessage.warning('管理页面已禁用');
+        return;
+      }
       
-      if (urlKey) {
-        adminKeyInput.value = urlKey;
-        await verifyAdminKey();
+      if (!data.hasKey) {
+         // 不需要密钥，设置一个默认token以通过后续可能的前端校验，或者跳过弹窗
+         localStorage.setItem('satoken', 'no-key-required');
+      } else {
+        // 检查 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlKey = urlParams.get('adminkey');
         
-        // 验证成功后，清理 URL 上的参数，保持地址栏干净
-        urlParams.delete('adminkey');
-        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
-        window.history.replaceState({}, '', newUrl);
+        if (urlKey) {
+          adminKeyInput.value = urlKey;
+          await verifyAdminKey();
+          
+          // 验证成功后，清理 URL 上的参数，保持地址栏干净
+          urlParams.delete('adminkey');
+          const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '') + window.location.hash;
+          window.history.replaceState({}, '', newUrl);
+        }
       }
     }
   } catch (error) {

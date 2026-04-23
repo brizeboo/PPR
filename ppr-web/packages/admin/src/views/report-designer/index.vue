@@ -200,7 +200,8 @@ async function save() {
     await reloadData()
     previewReport()
   } catch (e: any) {
-    ElMessage.error('保存失败: ' + e.message)
+    const msg = e.response?.data?.message || e.message || '';
+    ElMessage.error('保存失败: ' + msg)
   }
 }
 
